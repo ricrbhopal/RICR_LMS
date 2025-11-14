@@ -7,6 +7,7 @@ import JavaDSA from "./pages/dashboard/JavaDsaPage.jsx";
 import MERN from "./pages/dashboard/MernPage.jsx";
 import OOP from "./pages/dashboard/OopPage.jsx";
 import Aptitute from "./pages/dashboard/AptitutePage.jsx"
+import DataScience from "./pages/dashboard/dataScience.jsx"
 
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/courses/mern" element={<MERN />} />
           <Route path="/courses/oop" element={<OOP />} />
           <Route path="/courses/aptitute" element={<Aptitute />} />
+          <Route path="/courses/data-science" element={<DataScience />} />
         </Routes>
       </Router>
     </>

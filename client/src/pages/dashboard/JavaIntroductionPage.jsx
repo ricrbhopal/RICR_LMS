@@ -66,6 +66,7 @@ const CourseProgressFiveStyled = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-10">
       <div className="max-w-4xl mx-auto space-y-6">
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Java</h1>
         {steps.map((step) => (
           <div
             key={step.id}
@@ -78,8 +79,8 @@ const CourseProgressFiveStyled = () => {
                 className="w-full px-6 py-2 text-left flex justify-between  items-center hover:bg-gray-50 transition-colors gap-5"
               >
                 <div className="flex items-center justify-center w-full gap-2">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center ">
-                    <span className="text-blue-700 font-medium text-sm">
+                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center ">
+                    <span className="text-blue-700  font-medium text-[12px]">
                       {step.id}
                     </span>
                   </div>
