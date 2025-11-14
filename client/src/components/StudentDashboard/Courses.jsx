@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Java3DCard from "../../components/Java3DCard";
-const CoursesSection = () => {
+const Course = () => {
   const courses = [
     {
       id: 1,
@@ -171,4 +170,4 @@ const CoursesSection = () => {
   );
 };
 
-export default CoursesSection;
+export default Course;
