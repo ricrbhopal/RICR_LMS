@@ -27,29 +27,12 @@ const CourseProgressFiveStyled = () => {
     { id: 4, title: "Operators", difficulty: "Hard" },
   ];
 
-  const tabs = [
-    "Lecture",
-    "Notes",
-    "Resource",
-    "Video",
-    "Quiz/Problem",
-    "Info",
-    "Rating",
-  ];
-
   const [openSteps, setOpenSteps] = useState(() =>
     steps.reduce((acc, s) => ((acc[s.id] = false), acc), {})
   );
 
-  const [activeTabs, setActiveTabs] = useState(() =>
-    steps.reduce((acc, s) => ((acc[s.id] = "Lecture"), acc), {})
-  );
-
   const toggleOpen = (id) =>
     setOpenSteps((prev) => ({ ...prev, [id]: !prev[id] }));
-
-  const setActiveTabFor = (id, tab) =>
-    setActiveTabs((prev) => ({ ...prev, [id]: tab }));
 
   const getDifficultyClasses = (difficulty) => {
     if (difficulty === "Easy") return "bg-green-100 text-green-700";
@@ -59,14 +42,14 @@ const CourseProgressFiveStyled = () => {
 
   const getProgressColor = (progress) => {
     if (progress === 0) return "bg-gray-400";
-
     return "bg-green-700";
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-10">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Aptitude</h1>
+    <div className="min-h-screen bg-gray-50 py-4 px-3 sm:py-6 sm:px-4 lg:py-8 lg:px-6 xl:px-10">
+      <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+        <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-4 sm:mb-6">Aptitude</h1>
+        
         {steps.map((step) => (
           <div
             key={step.id}
@@ -76,35 +59,38 @@ const CourseProgressFiveStyled = () => {
             <div className="border-b border-gray-200">
               <button
                 onClick={() => toggleOpen(step.id)}
-                className="w-full px-6 py-2 text-left flex justify-between  items-center hover:bg-gray-50 transition-colors gap-5"
+                className="w-full px-4 sm:px-6 py-3 sm:py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-center justify-center w-full gap-2">
-                  <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center ">
-                    <span className="text-blue-700  font-medium text-[12px]">
+                <div className="flex items-center gap-3 sm:gap-4 w-full">
+                  <div className="w-6 h-6 sm:w-5 sm:h-5 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-700 font-medium text-xs sm:text-[12px]">
                       {step.id}
                     </span>
                   </div>
-                  <div className=" flex  w-full justify-between">
-                    <h2 className="font-semibold  text-gray-900">
+                  
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full gap-2 sm:gap-0">
+                    <h2 className="font-semibold text-gray-900 text-sm sm:text-base">
                       {step.title}
                     </h2>
-                    <div className="grid grid-cols-[100px_20px] gap-2 items-center ">
-                      {/* small progress bar */}
-                      <div className="w-25 h-2 rounded-full bg-gray-200 overflow-hidden ">
+                    
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      {/* Progress bar */}
+                      <div className="w-16 sm:w-20 md:w-24 h-2 rounded-full bg-gray-200 overflow-hidden flex-shrink-0">
                         <div
-                          className={
-                            " h-full " + getProgressColor(step.progress)
-                          }
+                          className={`h-full ${getProgressColor(step.progress)}`}
                           style={{ width: `${step.progress}%` }}
                         />
                       </div>
-                      <p className="text-sm text-gray-500">{step.progress}%</p>
+                      
+                      <p className="text-xs sm:text-sm text-gray-500 min-w-[35px] sm:min-w-[40px]">
+                        {step.progress}%
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <svg
-                  className={`w-5 h-5 text-gray-400 transition-transform ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-400 transition-transform flex-shrink-0 ml-2 ${
                     openSteps[step.id] ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -123,21 +109,21 @@ const CourseProgressFiveStyled = () => {
 
             {/* Expanded Content */}
             {openSteps[step.id] && (
-              <div className="p-6">
-                {/* TABLE HEADER (like screenshot) */}
+              <div className="p-3 sm:p-4 md:p-6">
+                {/* TABLE CONTAINER */}
                 <div className="bg-white border rounded-lg overflow-hidden">
-                  <div className="px-3 py-3 border-b border-gray-100">
-                    <div className="grid grid-cols-12 gap-4 items-center text-sm font-medium text-gray-700">
-                      <div className="col-span-6 ">Lecture</div>
-
+                  {/* TABLE HEADER - Hidden on mobile, shown on sm and above */}
+                  <div className="hidden sm:block px-3 py-3 border-b border-gray-100">
+                    <div className="grid grid-cols-12 gap-2 md:gap-4 items-center text-xs md:text-sm font-medium text-gray-700">
+                      <div className="col-span-6">Lecture</div>
                       <div className="col-span-1 text-center">Doc</div>
                       <div className="col-span-1 text-center">Video</div>
                       <div className="col-span-1 text-center">
-                        Quiz / <br />
-                        CodeLab
+                        <span className="hidden md:inline">Quiz /</span>
+                        <span className="hidden md:inline">CodeLab</span>
+                        <span className="md:hidden">Quiz</span>
                       </div>
                       <div className="col-span-1 text-center">Notes</div>
-
                       <div className="col-span-1 text-center">Info</div>
                       <div className="col-span-1 text-center">Rating</div>
                     </div>
@@ -148,92 +134,165 @@ const CourseProgressFiveStyled = () => {
                     {lectures.map((lec) => (
                       <div
                         key={lec.id}
-                        className="px-3 py-4 border-b border-gray-100 hover:bg-gray-50"
+                        className="px-3 py-3 sm:py-4 border-b border-gray-100 hover:bg-gray-50"
                       >
-                        <div className="grid grid-cols-12 gap-4 items-center">
-                          {/* Lecture column */}
-                          <div className="col-span-6 flex items-center gap-4">
-                            {/* lock icon circle like screenshot */}
-                            <div className="w-7 h-7 flex items-center justify-center text-gray-600">
-                              <IoIosLock />
+                        {/* Mobile Layout */}
+                        <div className="sm:hidden">
+                          {/* Lecture Info */}
+                          <div className="flex items-start gap-3 mb-3">
+                            <div className="w-6 h-6 flex items-center justify-center text-gray-600 flex-shrink-0 mt-0.5">
+                              <IoIosLock size={16} />
                             </div>
-
-                            <div>
-                              <div className="flex items-center gap-3">
-                                <span className="text-gray-500 text-sm">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-gray-500 text-xs">
                                   {lec.id}
                                 </span>
-                                <span className="text-gray-900">
+                                <span className="text-gray-900 text-sm font-medium truncate">
                                   {lec.title}
                                 </span>
-                                <span
-                                  className={`ml-2 px-2 py-0.5 rounded-full text-xs font-semibold ${getDifficultyClasses(
-                                    lec.difficulty
-                                  )}`}
-                                >
-                                  {lec.difficulty}
-                                </span>
                               </div>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getDifficultyClasses(
+                                  lec.difficulty
+                                )}`}
+                              >
+                                {lec.difficulty}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Action Icons */}
+                          <div className="flex justify-between items-center px-2">
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="w-7 h-7 flex items-center justify-center text-gray-600" title="Document">
+                                <FaBook size={14} />
+                              </div>
+                              <span className="text-xs text-gray-500">Doc</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="w-7 h-7 flex items-center justify-center text-gray-600" title="Video">
+                                <FaVideo size={14} />
+                              </div>
+                              <span className="text-xs text-gray-500">Video</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="w-7 h-7 flex items-center justify-center text-gray-600" title="Quiz/CodeLab">
+                                <FaLaptopCode size={14} />
+                              </div>
+                              <span className="text-xs text-gray-500">Quiz</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="w-7 h-7 flex items-center justify-center text-gray-600" title="Notes">
+                                <FaEdit size={14} />
+                              </div>
+                              <span className="text-xs text-gray-500">Notes</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="w-7 h-7 flex items-center justify-center text-gray-600" title="Info">
+                                <FaInfoCircle size={14} />
+                              </div>
+                              <span className="text-xs text-gray-500">Info</span>
+                            </div>
+                            
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="text-yellow-400 flex items-center" title="Rating">
+                                <IoIosStar size={12} />
+                                <IoIosStar size={12} />
+                                <IoIosStar size={12} />
+                                <IoIosStar size={12} />
+                                <IoIosStar size={12} />
+                              </div>
+                              <span className="text-xs text-gray-500">Rating</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Desktop Layout */}
+                        <div className="hidden sm:grid sm:grid-cols-12 gap-2 md:gap-4 items-center">
+                          {/* Lecture column */}
+                          <div className="col-span-6 flex items-center gap-3 md:gap-4">
+                            <div className="w-6 h-6 flex items-center justify-center text-gray-600 flex-shrink-0">
+                              <IoIosLock size={16} />
+                            </div>
+
+                            <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                              <span className="text-gray-500 text-sm flex-shrink-0">
+                                {lec.id}
+                              </span>
+                              <span className="text-gray-900 truncate">
+                                {lec.title}
+                              </span>
+                              <span
+                                className={`ml-2 px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0 ${getDifficultyClasses(
+                                  lec.difficulty
+                                )}`}
+                              >
+                                {lec.difficulty}
+                              </span>
                             </div>
                           </div>
 
                           {/* Doc */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="w-8 h-8  flex items-center justify-center"
+                              className="w-7 h-7 flex items-center justify-center text-gray-600"
                               title="Click to view document on new Page"
                             >
-                              <FaBook />
+                              <FaBook size={14} />
                             </div>
                           </div>
 
                           {/* Video */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="w-8 h-8  flex items-center justify-center"
-                              title="Click to view video (DRM Protected) in a modal can only be assecible if student submitted the Ratings"
+                              className="w-7 h-7 flex items-center justify-center text-gray-600"
+                              title="Click to view video (DRM Protected) in a modal can only be accessible if student submitted the Ratings"
                             >
-                              <FaVideo />
+                              <FaVideo size={14} />
                             </div>
                           </div>
 
                           {/* Quiz/Problem */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="w-8 h-8  flex items-center justify-center"
+                              className="w-7 h-7 flex items-center justify-center text-gray-600"
                               title="Click to take quiz or solve problem on new Page"
                             >
-                              <FaLaptopCode />
+                              <FaLaptopCode size={14} />
                             </div>
                           </div>
 
                           {/* Notes */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="w-8 h-8  flex items-center justify-center"
+                              className="w-7 h-7 flex items-center justify-center text-gray-600"
                               title="Click to view or add notes in a modal which can be editable and saved"
                             >
-                              <FaEdit />
+                              <FaEdit size={14} />
                             </div>
                           </div>
 
                           {/* Info */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="w-8 h-8  flex items-center justify-center"
+                              className="w-7 h-7 flex items-center justify-center text-gray-600"
                               title="Modal with Faculty name, start & end date, Student attendance"
                             >
-                              <FaInfoCircle />
+                              <FaInfoCircle size={14} />
                             </div>
                           </div>
 
                           {/* Rating */}
                           <div className="col-span-1 flex justify-center">
                             <div
-                              className="text-yellow-400 flex items-center me-2"
+                              className="text-yellow-400 flex items-center"
                               title="Rating will be submitted by the student and it will redirect to the related teaching faculty"
                             >
-                              {/* 5 hollow stars (you can replace with interactive rating later) */}
                               <IoIosStar size={12} />
                               <IoIosStar size={12} />
                               <IoIosStar size={12} />
@@ -247,11 +306,11 @@ const CourseProgressFiveStyled = () => {
                   </div>
                 </div>
 
-                {/* temp dev */}
-                <div className="mt-4 bg-blue-50 border border-blue-100 p-4 rounded-md">
-                  <p>
+                {/* Security Note */}
+                <div className="mt-3 sm:mt-4 bg-blue-50 border border-blue-100 p-3 sm:p-4 rounded-md">
+                  <p className="text-xs sm:text-sm text-blue-800">
                     Note: Make sure the entire website should be protected so
-                    that no unauthorized access, copy , screenshots occurs .
+                    that no unauthorized access, copy, screenshots occurs.
                   </p>
                 </div>
               </div>
@@ -260,7 +319,7 @@ const CourseProgressFiveStyled = () => {
         ))}
 
         {/* Global bottom remark */}
-        <div className="mt-2 bg-white/0 text-center text-sm text-gray-500">
+        <div className="mt-2 text-center text-xs sm:text-sm text-gray-500">
           {/* optional footer */}
         </div>
       </div>
