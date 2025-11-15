@@ -294,21 +294,21 @@ const Dashboard = () => {
     {
       id: 1,
       title: " One",
-      amount: "$2500",
+      amount: "₹2500",
       lastDateISO: "2025-10-25",
       status: "Due",
     },
     {
       id: 2,
       title: " Two",
-      amount: "$2500",
+      amount: "₹2500",
       lastDateISO: "2025-11-10",
       status: "Due",
     },
     {
       id: 3,
       title: " Three",
-      amount: "$2500",
+      amount: "₹2500",
       lastDateISO: "2025-12-05",
       status: "Complete",
     },
@@ -979,64 +979,67 @@ const Dashboard = () => {
                   <hr className="my-2 border-gray-200" />
 
                   {/* Header row for columns */}
-                  <div className="mt-3    md:flex items-center text-xs text-gray-500 font-medium">
-                    <div className="ml-3 ">Installment</div>
-                    <div className="w-1/3 ml-12">Last Date</div>
-                    <div className="w-1/4  ml-6">Status </div>
+                  <div className="mt-3 grid grid-cols-4 gap-2 items-center text-xs text-gray-500 font-medium px-2">
+                    <div className="col-span-1 text-[11px]">Installment</div>
+                    <div className="col-span-1 text-[11px]">Last Date</div>
+                    <div className="col-span-1 text-[11px]">Status</div>
+                    <div className="col-span-1 text-[11px] ">Pay Now</div>
                   </div>
 
-                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto text-start ">
+                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto text-start px-2">
                     {feesRequests.map((f) => (
                       <div
                         key={f.id}
-                        className="flex items-center justify-between bg-gray-50 rounded-md p-3"
+                        className="grid grid-cols-4 items-center bg-gray-50 rounded-md p-3 gap-2"
                       >
                         {/* Installment column */}
-                        <div className="flex items-center gap-3 w-1/5">
-                          <div className="h-10 w-10 rounded-full bg-white grid place-items-center">
-                            <FaRupeeSign className="w-4 h-4 text-gray-700" />
-                          </div>
+                        <div className="col-span-1 flex items-center gap-3">
                           <div className="flex flex-col">
-                            <div className="text-sm font-medium">{f.title}</div>
-                            <div className="text-xs text-red-500">
+                            <div className="text-[12px] font-medium">
+                              {f.title}
+                            </div>
+                            <div className="text-[11px] text-red-500">
                               {f.amount}
                             </div>
                           </div>
                         </div>
 
                         {/* Last Date column */}
-                        <div className="ml-5 text-[12px] text-gray-600 ">
+                        <div className="col-span-1 text-[9px] text-gray-600">
                           {new Date(f.lastDateISO).toLocaleDateString(
                             undefined,
-                            { day: "2-digit", month: "short", year: "numeric" }
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
                           )}
                         </div>
 
-                        {/* Status / Payment column */}
-                        <div className="w-1/4 flex flex-col text-center ">
+                        {/* Status column */}
+                        <div className="col-span-1">
                           {f.status === "Due" ? (
-                            <>
-                              <span className="text-[12px] bg-pink-100 text-pink-700 px-2 py-1 rounded-lg">
-                                Due
-                              </span>
-                              <div className="mt-2 text-right w-full">
-                                <button
-                                  onClick={() => openPayment(f)}
-                                  className="mt-1 w-full text-[12px] px-2 py-1 bg-purple-100 text-purple-700 rounded-md"
-                                >
-                                  Pay Now
-                                </button>
-                              </div>
-                            </>
+                            <span className="text-[11px] bg-pink-100 text-pink-700 px-2 py-1 rounded-lg">
+                              Due
+                            </span>
                           ) : (
-                            <>
-                              <span className="text-[12px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">
-                                Complete
-                              </span>
-                              <div className="mt-2 text-[12px] text-gray-400">
-                                Paid
-                              </div>
-                            </>
+                            <span className="text-[11px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">
+                              Complete
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Action column */}
+                        <div className="col-span-1 text-right">
+                          {f.status === "Due" ? (
+                            <button
+                              onClick={() => openPayment(f)}
+                              className="mt-1 inline-block text-[10px] px-2 py-1 bg-purple-600 text-white rounded-md"
+                            >
+                              Pay Now
+                            </button>
+                          ) : (
+                            <div className="text-[11px] text-gray-400">—</div>
                           )}
                         </div>
                       </div>
@@ -1175,7 +1178,29 @@ const Dashboard = () => {
 
 const WeeklyHoursChart = ({ weeklyHours = [], totalHours = 0 }) => {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const w = 360;
+  const h = 140;
+  const pad = 28;
   const max = Math.max(...weeklyHours, 1);
+
+  // compute points
+  const stepX = (w - pad * 2) / Math.max(1, weeklyHours.length - 1);
+  const points = weeklyHours.map((val, i) => {
+    const x = pad + i * stepX;
+    const y = pad + (h - pad * 2) * (1 - val / max);
+    return { x, y, val, i };
+  });
+
+  const linePath = points
+    .map(
+      (p, idx) => `${idx === 0 ? "M" : "L"} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`
+    )
+    .join(" ");
+
+  const areaPath = `${linePath} L ${pad + (weeklyHours.length - 1) * stepX} ${
+    h - pad
+  } L ${pad} ${h - pad} Z`;
+
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between">
@@ -1186,16 +1211,77 @@ const WeeklyHoursChart = ({ weeklyHours = [], totalHours = 0 }) => {
       </div>
 
       <div className="mt-3">
-        <div className="h-28 flex items-end gap-3">
-          {weeklyHours.map((h, i) => (
-            <div key={i} className="flex flex-col items-center">
+        <div className="rounded-lg bg-white p-3 shadow-sm">
+          <svg
+            viewBox={`0 0 ${w} ${h}`}
+            width="100%"
+            height={h}
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <linearGradient id="gradArea" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.18" />
+                <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.02" />
+              </linearGradient>
+            </defs>
+
+            {/* horizontal grid lines */}
+            {[0, 0.25, 0.5, 0.75, 1].map((t, idx) => {
+              const y = pad + (h - pad * 2) * t;
+              return (
+                <line
+                  key={idx}
+                  x1={pad}
+                  x2={w - pad}
+                  y1={y}
+                  y2={y}
+                  stroke="#e6e7eb"
+                  strokeWidth={1}
+                />
+              );
+            })}
+
+            {/* area under line */}
+            <path d={areaPath} fill="url(#gradArea)" stroke="none" />
+
+            {/* line */}
+            <path
+              d={linePath}
+              fill="none"
+              stroke="#7c3aed"
+              strokeWidth={2.5}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+            />
+
+            {/* point markers */}
+            {points.map((p) => (
+              <g key={p.i}>
+                <circle
+                  cx={p.x}
+                  cy={p.y}
+                  r={3.5}
+                  fill="#fff"
+                  stroke="#7c3aed"
+                  strokeWidth={2}
+                />
+                <circle cx={p.x} cy={p.y} r={2} fill="#7c3aed" />
+                <title>{`${days[p.i]}: ${p.val} hrs`}</title>
+              </g>
+            ))}
+          </svg>
+
+          <div className="mt-2 flex items-center justify-between px-1">
+            {days.map((d, i) => (
               <div
-                className="w-6 bg-purple-500 rounded-t transition-all"
-                style={{ height: `${(h / max) * 100}%` }}
-              />
-              <div className="text-xs mt-2 text-gray-500">{days[i]}</div>
-            </div>
-          ))}
+                key={d}
+                className="text-[11px] text-gray-500 w-1/7 text-center"
+                style={{ width: `${100 / 7}%` }}
+              >
+                {d}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
