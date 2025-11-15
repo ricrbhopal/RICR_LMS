@@ -62,9 +62,9 @@ const Attendence = () => {
         "2025-01-25": "Variables and Data Types",
         "2025-01-26": "Variables and Data Types",
         "2025-01-27": "Arrays and Strings",
-         "2025-01-28": "Variables and Data Types",
+        "2025-01-28": "Variables and Data Types",
         "2025-01-29": "Methods and Functions",
-         "2025-01-30": "Variables and Data Types",
+        "2025-01-30": "Variables and Data Types",
         "2025-01-31": "Object-Oriented Programming Basics",
         "2025-02-01": "Classes and Objects",
         "2025-02-02": "Classes and Objects",
@@ -94,7 +94,6 @@ const Attendence = () => {
         "2025-02-26": "Java 8 Features - Lambda",
         "2025-02-27": "Java 8 Features - Streams",
         "2025-02-28": "Final Project Discussion",
-
       },
       records: [
         { dateISO: "2025-01-16", status: "Present" },
@@ -552,52 +551,51 @@ const Attendence = () => {
     : null;
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Topic Modal */}
-      {showTopicModal && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setShowTopicModal(false)}
-        >
+    <div className="bg-green-50  mx-auto w-400 rounded-2xl shadow mt-5">
+      <div className="p-6 mx-auto w-200">
+        {/* Topic Modal */}
+        {showTopicModal && (
           <div
-            className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            onClick={() => setShowTopicModal(false)}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Topic Taught - {selectedDate}
-              </h3>
-              <button
-                onClick={() => setShowTopicModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-              >
-                ×
-              </button>
-            </div>
+            <div
+              className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Topic Taught - {selectedDate}
+                </h3>
+                <button
+                  onClick={() => setShowTopicModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-xl"
+                >
+                  ×
+                </button>
+              </div>
 
-            <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">
-                Course: <span className="font-medium">{selectedCourse}</span>
-              </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-blue-800 font-medium">{selectedTopic}</p>
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 mb-2">
+                  Course: <span className="font-medium">{selectedCourse}</span>
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-blue-800 font-medium">{selectedTopic}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowTopicModal(false)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Close
+                </button>
               </div>
             </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowTopicModal(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Close
-              </button>
-            </div>
           </div>
-        </div>
-      )}
-
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left: big attendance overview */}
           <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow">
             <div className="flex items-start justify-between">

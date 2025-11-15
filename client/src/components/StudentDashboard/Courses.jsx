@@ -76,7 +76,8 @@ const Course = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+<div className="bg-green-50 rounded-2xl mt-5 shadow px-6 py-6 w-400 mx-auto">
+    <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -165,6 +166,7 @@ const Course = () => {
       </div>
     </div>
 
+</div>
 
 
   );
