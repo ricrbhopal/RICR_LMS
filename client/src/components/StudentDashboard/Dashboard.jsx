@@ -461,9 +461,17 @@ const Dashboard = () => {
             transform: scale(1);
             opacity: 1;
           }
-   
         }
       `}</style>
+      
+      {/* Notification Overlay */}
+      {showNotifications && (
+        <div 
+          className="fixed inset-0 bg-black/40 z-40"
+          onClick={() => setShowNotifications(false)}
+        />
+      )}
+
       <div className="max-w-7xl mx-auto">
         <div className="bg-green-50 rounded-2xl shadow px-6 py-6">
           <div className="flex items-center justify-between mb-6">
@@ -519,7 +527,7 @@ const Dashboard = () => {
                   <div
                     ref={notifRef}
                     onClick={(e) => e.stopPropagation()}
-                    className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/5 overflow-hidden z-50"
+                    className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/15 overflow-hidden z-50"
                   >
                     <div className="px-4 py-3 border-b">
                       <div className="text-sm font-medium">Notifications</div>
