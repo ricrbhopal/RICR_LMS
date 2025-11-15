@@ -94,7 +94,7 @@ const Attendence = () => {
         "2025-02-26": "Java 8 Features - Lambda",
         "2025-02-27": "Java 8 Features - Streams",
         "2025-02-28": "Final Project Discussion",
-        
+
       },
       records: [
         { dateISO: "2025-01-16", status: "Present" },
@@ -628,9 +628,9 @@ const Attendence = () => {
                 </div>
 
                 {/* Right sidebar: calendar + notice */}
-                <div className="bg-white rounded-2xl p-6 shadow">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
+                <div className="bg-white rounded-2xl p-6 shadow ">
+                  <div className="flex items-center justify-between mb-4 ">
+                    <div className="flex items-center gap-3 mx-auto">
                       <button
                         onClick={prevMonth}
                         aria-label="Previous month"
