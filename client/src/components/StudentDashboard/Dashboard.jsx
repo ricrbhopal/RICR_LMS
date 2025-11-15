@@ -1034,7 +1034,7 @@ const Dashboard = () => {
                           {f.status === "Due" ? (
                             <button
                               onClick={() => openPayment(f)}
-                              className="mt-1 inline-block text-[10px] px-2 py-1 bg-purple-600 text-white rounded-md"
+                              className="mt-1 inline-block text-[10px] px-2 py-1 bg-blue-200 text-blue-800 rounded-md"
                             >
                               Pay Now
                             </button>
