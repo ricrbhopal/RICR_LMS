@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { HiBadgeCheck, HiChevronDown } from "react-icons/hi";
+import { MdOutlineFileDownload } from "react-icons/md";
 import {
   FiSearch,
   FiBell,
@@ -293,30 +294,30 @@ const Dashboard = () => {
   const [feesRequests, setFeesRequests] = useState([
     {
       id: 1,
-      title: " One",
+      title: " 1",
       amount: "₹2500",
       lastDateISO: "2025-10-25",
       status: "Due",
     },
     {
       id: 2,
-      title: " Two",
+      title: " 2",
       amount: "₹2500",
       lastDateISO: "2025-11-10",
       status: "Due",
     },
     {
       id: 3,
-      title: " Three",
+      title: " 3",
       amount: "₹2500",
       lastDateISO: "2025-12-05",
-      status: "Complete",
+      status: "Paid",
     },
   ]);
 
   const payNow = (id) => {
     setFeesRequests((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, status: "Complete" } : f))
+      prev.map((f) => (f.id === id ? { ...f, status: "Paid" } : f))
     );
   };
 
@@ -342,6 +343,24 @@ const Dashboard = () => {
       setPaymentOpen(false);
       setPaymentTarget(null);
     }, 900);
+  };
+
+  // allow downloading a simple receipt for a completed payment
+  const downloadReceipt = (fee) => {
+    try {
+      const content = `Receipt\n\nStudent: ${student.name}\nStudent ID: ${student.studentId}\nBatch: ${student.batch}\n\nItem: ${fee.title}\nAmount: ${fee.amount}\nStatus: ${fee.status}\nDate: ${new Date().toLocaleString()}\nReceipt ID: R-${fee.id}-${Date.now()}\n`;
+      const blob = new Blob([content], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `receipt-${fee.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Failed to download receipt", e);
+    }
   };
 
   const getUnreadCount = (key) => {
@@ -391,6 +410,19 @@ const Dashboard = () => {
   const formatDate = (iso) => {
     const d = new Date(iso);
     return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+
+  // format date as DD/MM/YYYY
+  const formatDMY = (iso) => {
+    try {
+      const d = new Date(iso);
+      const dd = String(d.getDate()).padStart(2, "0");
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    } catch (e) {
+      return iso;
+    }
   };
 
   return (
@@ -993,27 +1025,19 @@ const Dashboard = () => {
                         className="grid grid-cols-4 items-center bg-gray-50 rounded-md p-3 gap-2"
                       >
                         {/* Installment column */}
-                        <div className="col-span-1 flex items-center gap-3">
-                          <div className="flex flex-col">
-                            <div className="text-[12px] font-medium">
+                        <div className=" flex  items-center justify-start gap-2">
+                          <div className="flex flex-row items-center gap-2">
+                            <div className="text-[10px] font-medium bg-blue-100 rounded-full  text-center flex items-center justify-center w-5 h-5">
                               {f.title}
                             </div>
-                            <div className="text-[11px] text-red-500">
+                            <div className="text-[10px] text-blue-600">
                               {f.amount}
                             </div>
                           </div>
                         </div>
-
                         {/* Last Date column */}
                         <div className="col-span-1 text-[9px] text-gray-600">
-                          {new Date(f.lastDateISO).toLocaleDateString(
-                            undefined,
-                            {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            }
-                          )}
+                          {formatDMY(f.lastDateISO)}
                         </div>
 
                         {/* Status column */}
@@ -1024,7 +1048,7 @@ const Dashboard = () => {
                             </span>
                           ) : (
                             <span className="text-[11px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">
-                              Complete
+                              Paid
                             </span>
                           )}
                         </div>
@@ -1039,7 +1063,12 @@ const Dashboard = () => {
                               Pay Now
                             </button>
                           ) : (
-                            <div className="text-[11px] text-gray-400">—</div>
+                            <button
+                              onClick={() => downloadReceipt(f)}
+                              className="mt-1 inline-flex items-center text-[10px] px-2 py-1 bg-green-100 text-green-700 rounded-md"
+                            >
+                              <MdOutlineFileDownload className="" size={13} /> <span className="text-[11px]">Receipt</span>
+                            </button>
                           )}
                         </div>
                       </div>
