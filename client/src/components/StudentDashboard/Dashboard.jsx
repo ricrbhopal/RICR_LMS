@@ -291,9 +291,27 @@ const Dashboard = () => {
 
   // fees reminders (sample installments)
   const [feesRequests, setFeesRequests] = useState([
-    { id: 1, title: " One", amount: "$2500", lastDateISO: "2025-10-25", status: "Due" },
-    { id: 2, title: " Two", amount: "$2500", lastDateISO: "2025-11-10", status: "Due" },
-    { id: 3, title: " Three", amount: "$2500", lastDateISO: "2025-12-05", status: "Complete" },
+    {
+      id: 1,
+      title: " One",
+      amount: "$2500",
+      lastDateISO: "2025-10-25",
+      status: "Due",
+    },
+    {
+      id: 2,
+      title: " Two",
+      amount: "$2500",
+      lastDateISO: "2025-11-10",
+      status: "Due",
+    },
+    {
+      id: 3,
+      title: " Three",
+      amount: "$2500",
+      lastDateISO: "2025-12-05",
+      status: "Complete",
+    },
   ]);
 
   const payNow = (id) => {
@@ -714,8 +732,12 @@ const Dashboard = () => {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="text-lg font-semibold">Pay {paymentTarget.title}</div>
-                    <div className="text-sm text-gray-500">Amount: {paymentTarget.amount}</div>
+                    <div className="text-lg font-semibold">
+                      Pay {paymentTarget.title}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Amount: {paymentTarget.amount}
+                    </div>
                   </div>
                   <button
                     className="text-gray-500 hover:text-gray-800"
@@ -727,18 +749,38 @@ const Dashboard = () => {
                 </div>
 
                 <div className="mt-4">
-                  <div className="text-sm font-medium mb-2">Choose payment method</div>
+                  <div className="text-sm font-medium mb-2">
+                    Choose payment method
+                  </div>
                   <div className="space-y-2">
                     <label className="flex items-center gap-2">
-                      <input type="radio" name="paymode" value="upi" checked={payMode === 'upi'} onChange={() => setPayMode('upi')} />
+                      <input
+                        type="radio"
+                        name="paymode"
+                        value="upi"
+                        checked={payMode === "upi"}
+                        onChange={() => setPayMode("upi")}
+                      />
                       <span className="text-sm">UPI</span>
                     </label>
                     <label className="flex items-center gap-2">
-                      <input type="radio" name="paymode" value="card" checked={payMode === 'card'} onChange={() => setPayMode('card')} />
+                      <input
+                        type="radio"
+                        name="paymode"
+                        value="card"
+                        checked={payMode === "card"}
+                        onChange={() => setPayMode("card")}
+                      />
                       <span className="text-sm">Card</span>
                     </label>
                     <label className="flex items-center gap-2">
-                      <input type="radio" name="paymode" value="netbank" checked={payMode === 'netbank'} onChange={() => setPayMode('netbank')} />
+                      <input
+                        type="radio"
+                        name="paymode"
+                        value="netbank"
+                        checked={payMode === "netbank"}
+                        onChange={() => setPayMode("netbank")}
+                      />
                       <span className="text-sm">Net Banking</span>
                     </label>
                   </div>
@@ -757,7 +799,9 @@ const Dashboard = () => {
                     onClick={() => !processing && confirmPayment()}
                     disabled={processing}
                   >
-                    {processing ? "Processing..." : `Pay (${paymentTarget.amount})`}
+                    {processing
+                      ? "Processing..."
+                      : `Pay (${paymentTarget.amount})`}
                   </button>
                 </div>
               </div>
@@ -855,8 +899,8 @@ const Dashboard = () => {
                   <div className="flex items-start justify-between">
                     <div>
                       <h5 className="text-md font-semibold">Leave Status</h5>
-                  
                     </div>
+
                     <div>
                       <select
                         className="text-[12px] border border-gray-200 rounded-lg px-1 py-1 bg-white"
@@ -871,7 +915,7 @@ const Dashboard = () => {
                       </select>
                     </div>
                   </div>
-
+                  <hr className="my-2 border-gray-200" />
                   {/* sample leave requests data */}
                   <div className="mt-3 space-y-3 max-h-48 overflow-y-auto  ">
                     {getFilteredLeaves().map((l) => (
@@ -904,7 +948,7 @@ const Dashboard = () => {
                         <div>
                           {l.badge ? (
                             <span
-                              className={`text-[11px] font-semibold px-2 py-1 rounded-lg ${
+                              className={`text-[11px] font-semibold px-1 py-1 rounded-lg ${
                                 l.badge === "Approved"
                                   ? "bg-green-100 text-green-700"
                                   : l.badge === "Declined"
@@ -925,59 +969,73 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-
-
-
                 {/* Fees Reminder section (with header columns) */}
                 <div className="bg-white rounded-lg p-2 shadow w-full md:w-80">
                   <div className="flex items-center justify-between px-2">
                     <div>
                       <h5 className="text-md font-semibold">Fees Reminder</h5>
                     </div>
-      
                   </div>
-                  <hr className="my-2 border-gray-200"/>
+                  <hr className="my-2 border-gray-200" />
 
                   {/* Header row for columns */}
                   <div className="mt-3    md:flex items-center text-xs text-gray-500 font-medium">
                     <div className="ml-3 ">Installment</div>
                     <div className="w-1/3 ml-12">Last Date</div>
                     <div className="w-1/4  ml-6">Status </div>
-
                   </div>
 
                   <div className="mt-2 space-y-2 max-h-48 overflow-y-auto text-start ">
                     {feesRequests.map((f) => (
-                      <div key={f.id} className="flex items-center justify-between bg-gray-50 rounded-md p-3">
+                      <div
+                        key={f.id}
+                        className="flex items-center justify-between bg-gray-50 rounded-md p-3"
+                      >
                         {/* Installment column */}
                         <div className="flex items-center gap-3 w-1/5">
                           <div className="h-10 w-10 rounded-full bg-white grid place-items-center">
                             <FaRupeeSign className="w-4 h-4 text-gray-700" />
                           </div>
-                          <div>
+                          <div className="flex flex-col">
                             <div className="text-sm font-medium">{f.title}</div>
-                            <div className="text-xs text-red-500">{f.amount}</div>
+                            <div className="text-xs text-red-500">
+                              {f.amount}
+                            </div>
                           </div>
                         </div>
 
                         {/* Last Date column */}
                         <div className="ml-5 text-[12px] text-gray-600 ">
-                          {new Date(f.lastDateISO).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                          {new Date(f.lastDateISO).toLocaleDateString(
+                            undefined,
+                            { day: "2-digit", month: "short", year: "numeric" }
+                          )}
                         </div>
 
                         {/* Status / Payment column */}
                         <div className="w-1/4 flex flex-col text-center ">
-                          {f.status === 'Due' ? (
+                          {f.status === "Due" ? (
                             <>
-                              <span className="text-[12px] bg-pink-100 text-pink-700 px-2 py-1 rounded-lg">Due</span>
+                              <span className="text-[12px] bg-pink-100 text-pink-700 px-2 py-1 rounded-lg">
+                                Due
+                              </span>
                               <div className="mt-2 text-right w-full">
-                                <button onClick={() => openPayment(f)} className="mt-1 w-full text-[12px] px-2 py-1 bg-purple-100 text-purple-700 rounded-md">Pay Now</button>
+                                <button
+                                  onClick={() => openPayment(f)}
+                                  className="mt-1 w-full text-[12px] px-2 py-1 bg-purple-100 text-purple-700 rounded-md"
+                                >
+                                  Pay Now
+                                </button>
                               </div>
                             </>
                           ) : (
                             <>
-                              <span className="text-[12px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">Complete</span>
-                              <div className="mt-2 text-[12px] text-gray-400">Paid</div>
+                              <span className="text-[12px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">
+                                Complete
+                              </span>
+                              <div className="mt-2 text-[12px] text-gray-400">
+                                Paid
+                              </div>
                             </>
                           )}
                         </div>
