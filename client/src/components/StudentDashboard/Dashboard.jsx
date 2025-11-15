@@ -194,6 +194,138 @@ const Dashboard = () => {
 
   const [notifications, setNotifications] = useState(buildInitialNotifications);
 
+  // leave requests state (used by Leave Status card)
+  const [leaveFilter, setLeaveFilter] = useState("month");
+  const [leaveRequests, setLeaveRequests] = useState([
+    {
+      id: 1,
+      title: "Emergency Leave",
+      dateISO: "2025-11-10",
+      color: "bg-rose-50 text-rose-600",
+      status: "Pending",
+      badge: "",
+    },
+    {
+      id: 2,
+      title: "Medical Leave",
+      dateISO: "2025-11-12",
+      color: "bg-sky-50 text-sky-600",
+      status: "Approved",
+      badge: "Approved",
+    },
+    {
+      id: 3,
+      title: "Medical Leave",
+      dateISO: "2025-10-21",
+      color: "bg-sky-50 text-sky-600",
+      status: "Declined",
+      badge: "Declined",
+    },
+    {
+      id: 4,
+      title: "Fever",
+      dateISO: "2025-11-03",
+      color: "bg-rose-50 text-rose-600",
+      status: "Approved",
+      badge: "Approved",
+    },
+    {
+      id: 5,
+      title: "Personal Leave",
+      dateISO: "2025-09-15",
+      color: "bg-amber-50 text-amber-600",
+      status: "Approved",
+      badge: "Approved",
+    },
+    {
+      id: 6,
+      title: "Medical Leave",
+      dateISO: "2024-06-15",
+      color: "bg-sky-50 text-sky-600",
+      status: "Approved",
+      badge: "Approved",
+    },
+    {
+      id: 7,
+      title: "Emergency Leave",
+      dateISO: "2024-06-16",
+      color: "bg-rose-50 text-rose-600",
+      status: "Declined",
+      badge: "Declined",
+    },
+    {
+      id: 8,
+      title: "Sick",
+      dateISO: "2025-11-14",
+      color: "bg-rose-50 text-rose-600",
+      status: "Pending",
+      badge: "",
+    },
+  ]);
+
+  // return leaves filtered by selected range (month / year / week)
+  const getFilteredLeaves = () => {
+    const now = new Date();
+    let start;
+    if (leaveFilter === "month") {
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else if (leaveFilter === "year") {
+      start = new Date(now.getFullYear(), 0, 1);
+    } else if (leaveFilter === "week") {
+      start = new Date(now);
+      start.setDate(now.getDate() - 7);
+    } else {
+      start = new Date(0);
+    }
+    const end = now;
+    return leaveRequests.filter((l) => {
+      const d = new Date(l.dateISO);
+      return d >= start && d <= end;
+    });
+  };
+
+  const handleLeaveFilterChange = (val) => {
+    setLeaveFilter(val);
+    // keep leaveRequests unchanged; filtering is done by getFilteredLeaves()
+  };
+
+  // fees reminders (sample installments)
+  const [feesRequests, setFeesRequests] = useState([
+    { id: 1, title: " One", amount: "$2500", lastDateISO: "2025-10-25", status: "Due" },
+    { id: 2, title: " Two", amount: "$2500", lastDateISO: "2025-11-10", status: "Due" },
+    { id: 3, title: " Three", amount: "$2500", lastDateISO: "2025-12-05", status: "Complete" },
+  ]);
+
+  const payNow = (id) => {
+    setFeesRequests((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, status: "Complete" } : f))
+    );
+  };
+
+  // Payment modal state
+  const [paymentOpen, setPaymentOpen] = useState(false);
+  const [paymentTarget, setPaymentTarget] = useState(null);
+  const [payMode, setPayMode] = useState("upi");
+  const [processing, setProcessing] = useState(false);
+
+  const openPayment = (fee) => {
+    setPaymentTarget(fee);
+    setPayMode("upi");
+    setPaymentOpen(true);
+  };
+
+  const confirmPayment = () => {
+    if (!paymentTarget) return;
+    setProcessing(true);
+    // simulate async payment processing
+    setTimeout(() => {
+      payNow(paymentTarget.id);
+      setProcessing(false);
+      setPaymentOpen(false);
+      setPaymentTarget(null);
+    }, 900);
+  };
+
   const getUnreadCount = (key) => {
     if (key === "all") return notifications.filter((n) => !n.read).length;
     return notifications.filter((n) => n.category === key && !n.read).length;
@@ -341,7 +473,6 @@ const Dashboard = () => {
                   >
                     <div className="px-4 py-3 border-b">
                       <div className="text-sm font-medium">Notifications</div>
-                  
                     </div>
 
                     {/* Category cards (grid); click a card to view its notifications */}
@@ -569,6 +700,70 @@ const Dashboard = () => {
             </div>
           )}
 
+          {/* Payment modal - opens when Pay Now clicked */}
+          {paymentOpen && paymentTarget && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+              onClick={() => {
+                if (!processing) setPaymentOpen(false);
+              }}
+            >
+              <div
+                className="bg-white rounded-xl shadow-lg w-full max-w-md p-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="text-lg font-semibold">Pay {paymentTarget.title}</div>
+                    <div className="text-sm text-gray-500">Amount: {paymentTarget.amount}</div>
+                  </div>
+                  <button
+                    className="text-gray-500 hover:text-gray-800"
+                    onClick={() => !processing && setPaymentOpen(false)}
+                    aria-label="Close payment"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <div className="text-sm font-medium mb-2">Choose payment method</div>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="paymode" value="upi" checked={payMode === 'upi'} onChange={() => setPayMode('upi')} />
+                      <span className="text-sm">UPI</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="paymode" value="card" checked={payMode === 'card'} onChange={() => setPayMode('card')} />
+                      <span className="text-sm">Card</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="paymode" value="netbank" checked={payMode === 'netbank'} onChange={() => setPayMode('netbank')} />
+                      <span className="text-sm">Net Banking</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    className="px-4 py-2 bg-gray-100 rounded-md"
+                    onClick={() => !processing && setPaymentOpen(false)}
+                    disabled={processing}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-purple-600 text-white rounded-md"
+                    onClick={() => !processing && confirmPayment()}
+                    disabled={processing}
+                  >
+                    {processing ? "Processing..." : `Pay (${paymentTarget.amount})`}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Top: profile and badges */}
           <div className="flex items-center  justify-end">
             <div className="flex items-center space-x-3">
@@ -616,44 +811,183 @@ const Dashboard = () => {
 
               {/* Main content: calendar/events + student list */}
 
-              <div className="bg-white rounded-lg p-4 shadow w-fit">
-                <h4 className="text-lg font-semibold mb-3">
-                  Class Student List
-                </h4>
-                <div className="space-y-3">
-                  {students.map((s) => (
-                    <div
-                      key={s.id}
-                      className="flex gap-8 items-center justify-between"
-                    >
-                      <div className="flex items-center">
-                        <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
-                          <img
-                            src={student.avatar}
-                            alt="avatar"
-                            className="rounded-full object-cover shadow"
-                          />
-                        </div>
-                        <div>
-                          <div className="font-medium">{s.name}</div>
-                          <div className="text-xs text-gray-400">
-                            Rank #{s.rank}
+              <div className="flex flex-col md:flex-row gap-4 items-start">
+                <div className="bg-white rounded-lg p-4  shadow ">
+                  <h4 className="text-lg font-semibold mb-3">
+                    Class Student List
+                  </h4>
+                  <div className="space-y-3">
+                    {students.map((s) => (
+                      <div
+                        key={s.id}
+                        className="flex gap-8 items-center justify-between"
+                      >
+                        <div className="flex items-center">
+                          <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                            <img
+                              src={student.avatar}
+                              alt="avatar"
+                              className="rounded-full object-cover shadow"
+                            />
+                          </div>
+                          <div>
+                            <div className="font-medium">{s.name}</div>
+                            <div className="text-xs text-gray-400">
+                              Rank #{s.rank}
+                            </div>
                           </div>
                         </div>
+                        <a
+                          href={s.linkedin}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-600 text-sm"
+                        >
+                          LinkedIn
+                        </a>
                       </div>
-                      <a
-                        href={s.linkedin}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-600 text-sm"
-                      >
-                        LinkedIn
-                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Leave Status box (matches provided UI) */}
+                <div className="bg-white rounded-lg p-4 shadow w-full md:w-80 h-70">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h5 className="text-md font-semibold">Leave Status</h5>
+                  
                     </div>
-                  ))}
+                    <div>
+                      <select
+                        className="text-[12px] border border-gray-200 rounded-lg px-1 py-1 bg-white"
+                        value={leaveFilter}
+                        onChange={(e) =>
+                          handleLeaveFilterChange(e.target.value)
+                        }
+                      >
+                        <option value="month">This Month</option>
+                        <option value="year">This Year</option>
+                        <option value="week">Last Week</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* sample leave requests data */}
+                  <div className="mt-3 space-y-3 max-h-48 overflow-y-auto  ">
+                    {getFilteredLeaves().map((l) => (
+                      <div
+                        key={l.id}
+                        className="flex items-center justify-between  rounded-md p-1"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`${l.color} p-2 rounded-md grid place-items-center`}
+                          >
+                            <FiUserCheck className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium">{l.title}</div>
+                            <div className="text-xs text-gray-400">
+                              Date :{" "}
+                              {new Date(l.dateISO).toLocaleDateString(
+                                undefined,
+                                {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                }
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          {l.badge ? (
+                            <span
+                              className={`text-[11px] font-semibold px-2 py-1 rounded-lg ${
+                                l.badge === "Approved"
+                                  ? "bg-green-100 text-green-700"
+                                  : l.badge === "Declined"
+                                  ? "bg-red-100 text-red-700"
+                                  : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {l.badge}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-gray-400">
+                              {l.status}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+
+
+
+                {/* Fees Reminder section (with header columns) */}
+                <div className="bg-white rounded-lg p-2 shadow w-full md:w-80">
+                  <div className="flex items-center justify-between px-2">
+                    <div>
+                      <h5 className="text-md font-semibold">Fees Reminder</h5>
+                    </div>
+      
+                  </div>
+                  <hr className="my-2 border-gray-200"/>
+
+                  {/* Header row for columns */}
+                  <div className="mt-3    md:flex items-center text-xs text-gray-500 font-medium">
+                    <div className="ml-3 ">Installment</div>
+                    <div className="w-1/3 ml-12">Last Date</div>
+                    <div className="w-1/4  ml-6">Status </div>
+
+                  </div>
+
+                  <div className="mt-2 space-y-2 max-h-48 overflow-y-auto text-start ">
+                    {feesRequests.map((f) => (
+                      <div key={f.id} className="flex items-center justify-between bg-gray-50 rounded-md p-3">
+                        {/* Installment column */}
+                        <div className="flex items-center gap-3 w-1/5">
+                          <div className="h-10 w-10 rounded-full bg-white grid place-items-center">
+                            <FaRupeeSign className="w-4 h-4 text-gray-700" />
+                          </div>
+                          <div>
+                            <div className="text-sm font-medium">{f.title}</div>
+                            <div className="text-xs text-red-500">{f.amount}</div>
+                          </div>
+                        </div>
+
+                        {/* Last Date column */}
+                        <div className="ml-5 text-[12px] text-gray-600 ">
+                          {new Date(f.lastDateISO).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </div>
+
+                        {/* Status / Payment column */}
+                        <div className="w-1/4 flex flex-col text-center ">
+                          {f.status === 'Due' ? (
+                            <>
+                              <span className="text-[12px] bg-pink-100 text-pink-700 px-2 py-1 rounded-lg">Due</span>
+                              <div className="mt-2 text-right w-full">
+                                <button onClick={() => openPayment(f)} className="mt-1 w-full text-[12px] px-2 py-1 bg-purple-100 text-purple-700 rounded-md">Pay Now</button>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <span className="text-[12px] bg-green-100 text-green-800 px-2 py-1 rounded-lg">Complete</span>
+                              <div className="mt-2 text-[12px] text-gray-400">Paid</div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
+
             {/* Right sidebar: upcoming events */}
             <div className=" bg-white rounded-lg p-4 shadow grid justify-center h-fit">
               <h4 className="text-md mb-3 text-center text-gray-500">Events</h4>
