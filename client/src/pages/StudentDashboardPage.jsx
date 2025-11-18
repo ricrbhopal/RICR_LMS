@@ -13,7 +13,10 @@ const StudentDashboardPage = () => {
   return (
     <>
       <div className="flex">
-        <SideBar active={active} setActive={setActive} />
+        <div className="relative w-20 z-99">
+          <SideBar active={active} setActive={setActive} className="absolute" />
+        </div>
+    
         <div className="w-full">
           {active === "Dashboard" && <Dashboard />}
           {active === "Courses" && <Courses />}

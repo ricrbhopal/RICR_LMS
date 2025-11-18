@@ -551,8 +551,8 @@ const Attendence = () => {
     : null;
 
   return (
-    <div className="bg-green-50  mx-auto w-400 rounded-2xl shadow mt-5">
-      <div className="p-6 mx-auto w-200">
+    <div className="bg-green-50  mx-auto w-full rounded-2xl shadow mt-5">
+      <div className="p-6 mx-auto w-full">
         {/* Topic Modal */}
         {showTopicModal && (
           <div
