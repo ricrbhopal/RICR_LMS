@@ -261,6 +261,9 @@ const LearningSupport = () => {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
 
+  // Status filter state
+  const [statusFilter, setStatusFilter] = useState("all");
+
   // Mock submitted requests data
   const [submittedRequests, setSubmittedRequests] = useState([
     {
@@ -350,6 +353,23 @@ const LearningSupport = () => {
       completedDate: "2025-11-20T16:00:00",
       closedDate: "2025-11-21T10:00:00",
     },
+    {
+      id: 6,
+      course: "DSA",
+      topics: ["Linked Lists - Singly Linked List", "Linked Lists - Doubly Linked List"],
+      classType: "doubt",
+      description: "Need clarification on pointer operations in linked lists",
+      status: "cancelled",
+      submittedAt: "2025-11-16T13:30:00",
+      updatedAt: "2025-11-18T10:45:00",
+      scheduledDate: "2025-11-18T14:00:00",
+      classMode: "online",
+      location: "https://example.com/meeting-link",
+      rating: null,
+      completedDate: null,
+      closedDate: null,
+      cancellationReason: "Student was not present at the scheduled date and time (Nov 18, 2025 at 2:00 PM). Request has been closed.",
+    },
   ]);
 
   // Build topic options based on selected course
@@ -380,6 +400,30 @@ const LearningSupport = () => {
     });
     return opts;
   }, [selectedCourse]);
+
+  // Calculate status counts
+  const statusCounts = useMemo(() => {
+    const counts = {
+      all: submittedRequests.length,
+      pending: 0,
+      approved: 0,
+      completed: 0,
+      closed: 0,
+      cancelled: 0,
+    };
+    submittedRequests.forEach((req) => {
+      if (counts[req.status] !== undefined) {
+        counts[req.status]++;
+      }
+    });
+    return counts;
+  }, [submittedRequests]);
+
+  // Filter requests based on status
+  const filteredRequests = useMemo(() => {
+    if (statusFilter === "all") return submittedRequests;
+    return submittedRequests.filter((req) => req.status === statusFilter);
+  }, [submittedRequests, statusFilter]);
 
   // Handle course change - clear all selections
   const handleCourseChange = (courseValue) => {
@@ -493,62 +537,46 @@ const LearningSupport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Main Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-          {/* Tabbed Header */}
-          <div className="bg-white">
-            <div className="flex border-b-2 border-indigo-600">
+    <div className="min-h-screen py-4 px-4">
+      <div className="max-w-8xl mx-auto">
+        {/* Toggle Slider Header */}
+        <div className="mb-4">
+          <div className="flex items-center justify-center mb-4">
+            <div className="relative flex items-center  bg-gray-200 rounded-full p-1 shadow-inner w-[70%]" >
+              {/* Slider Background */}
+              <div
+                className={`absolute top-1 bottom-1 rounded-full bg-indigo-500 transition-all duration-300 ease-in-out ${
+                  activeTab === "create" ? "left-1" : "left-[calc(50%-4px)]"
+                }`}
+                style={{ width: "calc(50% - 4px)" }}
+              />
+              
+              {/* Toggle Buttons */}
               <button
                 onClick={() => setActiveTab("create")}
-                className={`flex-1 px-6 py-4 text-left transition-all ${
+                className={`relative z-10 px-6 py-2 w-full flex justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
                   activeTab === "create"
-                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "text-white"
+                    : "text-gray-700 hover:text-gray-900"
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                  <div>
-                    <h2 className="text-lg font-bold">
-                      Learning Support Request
-                    </h2>
-                    <p
-                      className={`text-sm ${
-                        activeTab === "create"
-                          ? "text-gray-100"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      Request a Doubt or Backup class
-                    </p>
-                  </div>
+                  
+                  <span>How can we help you?</span>
                 </div>
               </button>
+              
               <button
                 onClick={() => setActiveTab("submitted")}
-                className={`flex-1 px-6 py-4 text-left transition-all ${
+                className={`relative z-10 px-6 py-2 w-full flex justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
                   activeTab === "submitted"
-                    ? "bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-bold"
-                    : "text-gray-600 hover:bg-gray-100"
+                    ? "text-white"
+                    : "text-gray-700 hover:text-gray-900"
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <svg
-                    className="w-5 h-5"
+                    className="w-4 h-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -560,22 +588,28 @@ const LearningSupport = () => {
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                     />
                   </svg>
-                  <div>
-                    <h2 className="text-lg font-bold">Request Status</h2>
-                    <p
-                      className={`text-sm ${
-                        activeTab === "submitted"
-                          ? "text-gray-100"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      View your request status
-                    </p>
-                  </div>
+                  <span>View Raised Requests</span>
+                  <span className={`ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  activeTab === "submitted"
+                    ? "bg-white bg-opacity-30 text-white"
+                    : "bg-gray-300 text-gray-700"
+                }`}>
+                    {statusCounts.all}
+                  </span>
                 </div>
               </button>
             </div>
           </div>
+
+          {/* Section Title */}
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-600">
+              {activeTab === "create"
+                ? "Need help with a topic? Request a Doubt or Backup class"
+                : "Track and manage your learning support requests"}
+            </p>
+          </div>
+        </div>
 
           {/* Tab Content */}
           {activeTab === "create" ? (
@@ -627,10 +661,10 @@ const LearningSupport = () => {
                               : "text-gray-900"
                           }`}
                         >
-                          Doubt Class
+                          Raise a Doubt
                         </div>
                         <div className="text-xs text-gray-600">
-                          Clear your doubts
+                          Get technical help for Specific Topics
                         </div>
                       </div>
                     </div>
@@ -659,10 +693,10 @@ const LearningSupport = () => {
                               : "text-gray-900"
                           }`}
                         >
-                          Backup Class
+                          Request Backup Class
                         </div>
                         <div className="text-xs text-gray-600">
-                          Catch up on missed topics
+                          Schedule an extra session for a topic or chapter you missed
                         </div>
                       </div>
                     </div>
@@ -766,7 +800,11 @@ const LearningSupport = () => {
                 </div>
 
                 {/* Selected Topics Display */}
-                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-5 border border-indigo-100 h-55 col-span-1 lg:col-span-2">
+                <div
+                  className={`bg-indigo-50 rounded-xl p-5 border border-indigo-200 h-55 ${
+                    (classType === "backup" || classType === "") &&"lg:col-span-2"
+                  }`}
+                >
                   <div className="flex items-center gap-2 mb-3">
                     <svg
                       className="w-5 h-5 text-indigo-600"
@@ -784,7 +822,7 @@ const LearningSupport = () => {
                     <label className="block text-sm font-semibold text-gray-900">
                       Selected Topics
                       {selectedTopics.length > 0 && (
-                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-600 text-white">
+                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 border border-indigo-200">
                           {selectedTopics.length}
                         </span>
                       )}
@@ -844,36 +882,38 @@ const LearningSupport = () => {
                 </div>
 
                 {/* Description Section */}
-                {/* <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 h-55">
-                <div className="flex items-center gap-2 mb-3">
-                  <svg
-                    className="w-5 h-5 text-indigo-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                  <label className="block text-sm font-semibold text-gray-900">
-                    Description / Reason
-                  </label>
-                  <span className="text-xs text-gray-500">(Optional)</span>
-                </div>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={5}
-                  className="w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
-                  placeholder="Explain why you need this class or what specific topics you want covered...
+                {classType === "doubt" && (
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 h-55">
+                    <div className="flex items-center gap-2 mb-3">
+                      <svg
+                        className="w-5 h-5 text-indigo-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                      <label className="block text-sm font-semibold text-gray-900">
+                        Describe your Doubt
+                      </label>
+                      <span className="text-xs text-gray-500">(Optional)</span>
+                    </div>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows={5}
+                      className="w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                      placeholder="Explain why you need this class or what specific topics you want covered...
 
 Example: I'm struggling with 2D arrays implementation and need more practice problems."
-                />
-              </div> */}
+                    />
+                  </div>
+                )}
 
                 {/* Status Message */}
                 {statusMessage && (
@@ -920,7 +960,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                   </p>
                   <button
                     type="submit"
-                    className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 transition-all shadow-lg hover:shadow-xl"
+                    className="inline-flex items-center px-8 py-3 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-md hover:shadow-lg"
                   >
                     <svg
                       className="w-5 h-5 mr-2"
@@ -942,7 +982,200 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
             </form>
           ) : (
             /* Submitted Requests View */
-            <div className="p-6">
+            <div className="p-2">
+              {/* Status Filter Buttons */}
+              <div className="mb-6 p-2 ">
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setStatusFilter("all")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "all"
+                        ? "bg-indigo-100 text-indigo-700 border-2 border-indigo-200 shadow-sm"
+                        : "bg-white text-gray-700 border border-gray-300 hover:border-indigo-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                    All Requests
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "all"
+                          ? "bg-indigo-100 text-indigo-700"
+                          : "bg-gray-100"
+                      }`}
+                    >
+                      {statusCounts.all}
+                    </span>
+                  </button>
+                  
+                  <button
+                    onClick={() => setStatusFilter("pending")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "pending"
+                        ? "bg-amber-100 text-amber-700 border-2 border-amber-200 shadow-sm"
+                        : "bg-white text-amber-700 border border-amber-200 hover:border-amber-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Pending
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "pending"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-amber-100"
+                      }`}
+                    >
+                      {statusCounts.pending}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setStatusFilter("approved")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "approved"
+                        ? "bg-green-100 text-green-700 border-2 border-green-200 shadow-sm"
+                        : "bg-white text-green-700 border border-green-200 hover:border-green-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Approved
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "approved"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-green-100"
+                      }`}
+                    >
+                      {statusCounts.approved}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setStatusFilter("completed")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "completed"
+                        ? "bg-blue-100 text-blue-700 border-2 border-blue-200 shadow-sm"
+                        : "bg-white text-blue-700 border border-blue-200 hover:border-blue-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Completed
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "completed"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-blue-100"
+                      }`}
+                    >
+                      {statusCounts.completed}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setStatusFilter("closed")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "closed"
+                        ? "bg-purple-100 text-purple-700 border-2 border-purple-200 shadow-sm"
+                        : "bg-white text-purple-700 border border-purple-200 hover:border-purple-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Closed
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "closed"
+                          ? "bg-purple-100 text-purple-700"
+                          : "bg-purple-100"
+                      }`}
+                    >
+                      {statusCounts.closed}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setStatusFilter("cancelled")}
+                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                      statusFilter === "cancelled"
+                        ? "bg-red-100 text-red-700 border-2 border-red-200 shadow-sm"
+                        : "bg-white text-red-700 border border-red-200 hover:border-red-300"
+                    }`}
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1.5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Cancelled
+                    <span
+                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                        statusFilter === "cancelled"
+                          ? "bg-red-100 text-red-700"
+                          : "bg-red-100"
+                      }`}
+                    >
+                      {statusCounts.cancelled}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
               {submittedRequests.length === 0 ? (
                 <div className="text-center py-12">
                   <svg
@@ -966,17 +1199,50 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                   </p>
                   <button
                     onClick={() => setActiveTab("create")}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
                   >
                     Create Your First Request
                   </button>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {submittedRequests.map((request) => (
+                  {filteredRequests.length === 0 ? (
+                    <div className="text-center py-12">
+                      <svg
+                        className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        No {statusFilter === "all" ? "" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Requests
+                      </h3>
+                      <p className="text-gray-500 mb-4">
+                        {statusFilter === "all"
+                          ? "You haven't submitted any learning support requests yet."
+                          : `No requests with "${statusFilter}" status found.`}
+                      </p>
+                      {statusFilter !== "all" && (
+                        <button
+                          onClick={() => setStatusFilter("all")}
+                          className="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
+                        >
+                          View All Requests
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    filteredRequests.map((request) => (
                     <div
                       key={request.id}
-                      className="bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 p-4 hover:shadow-lg transition-shadow"
+                      className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
@@ -985,10 +1251,10 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                               {request.course}
                             </h3>
                             <span
-                              className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                              className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 request.classType === "doubt"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-blue-100 text-blue-800"
+                                  ? "bg-yellow-50 text-yellow-700 border border-yellow-200"
+                                  : "bg-blue-50 text-blue-700 border border-blue-200"
                               }`}
                             >
                               {request.classType === "doubt"
@@ -1005,18 +1271,18 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                         </div>
                         <div className="grid items-center gap-2">
                           <div
-                            className={`px-3 py-1 rounded-lg text-xs font-bold text-center ${
+                            className={`px-3 py-1 rounded-lg text-xs font-medium text-center border ${
                               request.status === "pending"
-                                ? "bg-amber-100 text-amber-800"
+                                ? "bg-amber-50 text-amber-700 border-amber-200"
                                 : request.status === "approved"
-                                ? "bg-green-100 text-green-800"
+                                ? "bg-green-50 text-green-700 border-green-200"
                                 : request.status === "completed"
-                                ? "bg-blue-100 text-blue-800"
+                                ? "bg-blue-50 text-blue-700 border-blue-200"
                                 : request.status === "closed"
-                                ? "bg-purple-100 text-purple-800"
-                                : request.status === "rejected"
-                                ? "bg-red-100 text-red-800"
-                                : "bg-gray-100 text-gray-800"
+                                ? "bg-purple-50 text-purple-700 border-purple-200"
+                                : request.status === "cancelled"
+                                ? "bg-red-50 text-red-700 border-red-200"
+                                : "bg-gray-50 text-gray-700 border-gray-200"
                             }`}
                           >
                             {request.status.toUpperCase()}
@@ -1026,7 +1292,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                           {request.status === "completed" && (
                             <button
                               onClick={() => handleMarkComplete(request.id)}
-                              className="px-3 py-1 bg-indigo-600 text-white text-xs font-semibold rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-1"
+                              className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg border border-green-200 hover:bg-green-100 transition-colors flex items-center gap-1"
                             >
                               <svg
                                 className="w-3 h-3"
@@ -1196,9 +1462,11 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                               </div>
                             </div>
                             {request.rating && (
-                              <div className="flex items-center justify-between bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-2">
+                              <div className="flex items-center justify-between bg-yellow-50 border border-yellow-200 rounded-lg p-2">
                                 <div className="flex items-center gap-1">
-                                  <span className="text-xs font-semibold text-gray-700">Your Rating:</span>
+                                  <span className="text-xs font-semibold text-gray-700">
+                                    Your Rating:
+                                  </span>
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <svg
                                       key={star}
@@ -1273,48 +1541,121 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                               </div>
                             </div>
                           </div>
-                         </div>
+                        </div>
                       )}
 
-                      {request.status === "rejected" &&
-                        request.rejectionReason && (
-                          <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-2">
-                            <svg
-                              className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            <div>
-                              <p className="text-xs font-semibold text-red-800">
-                                Request Rejected
-                              </p>
-                              <p className="text-xs text-red-700">
-                                Reason: {request.rejectionReason}
-                              </p>
+                      {request.status === "cancelled" &&
+                        request.cancellationReason && (
+                          <div className="space-y-2">
+                            {/* Show scheduled class details if they exist */}
+                            {request.scheduledDate && (
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 flex items-center gap-2">
+                                  <svg
+                                    className="w-4 h-4 text-orange-600 shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                    />
+                                  </svg>
+                                  <div>
+                                    <p className="text-xs font-semibold text-orange-800">
+                                      Was Scheduled
+                                    </p>
+                                    <p className="text-xs text-orange-700">
+                                      {new Date(
+                                        request.scheduledDate
+                                      ).toLocaleDateString()}{" "}
+                                      at{" "}
+                                      {new Date(
+                                        request.scheduledDate
+                                      ).toLocaleTimeString()}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Class Mode */}
+                                {request.classMode && (
+                                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 flex items-center gap-2">
+                                    <svg
+                                      className="w-4 h-4 text-orange-600 shrink-0"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d={
+                                          request.classMode === "online"
+                                            ? "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                                            : "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                        }
+                                      />
+                                    </svg>
+                                    <div>
+                                      <p className="text-xs font-semibold text-orange-800">
+                                        {request.classMode === "online"
+                                          ? "Online"
+                                          : "Offline"}
+                                      </p>
+                                      {request.location && (
+                                        <p className="text-xs text-orange-700 truncate">
+                                          {request.classMode === "online" ? "Meeting Link" : request.location}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Cancellation reason */}
+                            <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-2">
+                              <svg
+                                className="w-4 h-4 text-red-600 mt-0.5 shrink-0"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              <div>
+                                <p className="text-xs font-semibold text-red-800">
+                                  Request Cancelled
+                                </p>
+                                <p className="text-xs text-red-700">
+                                  Reason: {request.cancellationReason}
+                                </p>
+                              </div>
                             </div>
                           </div>
                         )}
                     </div>
-                  ))}
+                  ))
+                  )}
                 </div>
               )}
             </div>
           )}
-        </div>
       </div>
 
       {/* Rating Modal */}
       {showRatingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-slideUp">
             {/* Modal Header with Gradient */}
-            <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 px-6 py-8 relative">
+            <div className="bg-indigo-500 px-6 py-8 relative">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-1">
@@ -1331,7 +1672,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                     setRating(0);
                     setFeedback("");
                   }}
-                  className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
+                  className="text-white hover:bg-white hover:text-indigo-600 hover:bg-opacity-20 rounded-full p-2 transition-all"
                 >
                   <svg
                     className="w-6 h-6"
@@ -1383,7 +1724,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                   ))}
                 </div>
                 {rating > 0 && (
-                  <div className="text-center bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl py-3 px-4">
+                  <div className="text-center bg-yellow-50 border border-yellow-200 rounded-xl py-3 px-4">
                     <p className="text-lg font-bold text-gray-800">
                       {rating === 1 && "😞 Poor"}
                       {rating === 2 && "😐 Fair"}
@@ -1395,25 +1736,12 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                 )}
               </div>
 
-             
-
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <button
-                  onClick={() => {
-                    setShowRatingModal(false);
-                    setSelectedRequestId(null);
-                    setRating(0);
-                    
-                  }}
-                  className="flex-1 px-6 py-3.5 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
                   onClick={handleSubmitRating}
                   disabled={rating === 0}
-                  className="flex-1 px-6 py-3.5 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white font-bold rounded-xl hover:shadow-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3.5 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <svg
                     className="w-5 h-5"
@@ -1428,7 +1756,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                       d="M5 13l4 4L19 7"
                     />
                   </svg>
-                  Submit & Close Ticket
+                  Submit
                 </button>
               </div>
             </div>
@@ -1541,7 +1869,7 @@ function SearchableTopicSelect({
 
             return (
               <li key={g.stepId} className="border-b last:border-b-0">
-                <div className="px-4 py-2.5 bg-gradient-to-r from-indigo-50 to-blue-50 text-sm font-semibold text-indigo-900 cursor-default flex items-center gap-2">
+                <div className="px-4 py-2.5 bg-indigo-50 text-sm font-semibold text-indigo-900 cursor-default flex items-center gap-2">
                   <svg
                     className="w-4 h-4 text-indigo-600"
                     fill="currentColor"
