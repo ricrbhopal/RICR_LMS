@@ -1,5 +1,33 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { FaBook } from "react-icons/fa6";
+import toast, { Toaster } from "react-hot-toast";
+import { 
+  MdCheckCircle, 
+  MdEdit, 
+  MdImage, 
+  MdClose, 
+  MdSend, 
+  MdList,
+  MdSchedule,
+  MdCheckBox,
+  MdCancel,
+  MdLocationOn,
+  MdVideoCall,
+  MdSchool,
+  MdSearch,
+  MdAdd,
+  MdStar,
+  MdStarBorder,
+  MdPending,
+  MdLock,
+  MdLibraryBooks,
+  MdChevronRight,
+  MdCheck
+} from "react-icons/md";
+import { HiClipboardList } from "react-icons/hi";
+import { BiSolidCategory } from "react-icons/bi";
+import { FaInbox } from "react-icons/fa";
+import { HiDocumentText } from "react-icons/hi2";
 
 const LearningSupport = () => {
   const Courses = [
@@ -251,7 +279,7 @@ const LearningSupport = () => {
   const [topicToAdd, setTopicToAdd] = useState("");
   const [classType, setClassType] = useState("");
   const [description, setDescription] = useState("");
-  const [statusMessage, setStatusMessage] = useState(null);
+  const [screenshots, setScreenshots] = useState([]); // array of {id, file, preview}
   const idRef = React.useRef(1);
   const topicSelectRef = useRef(null); // Add ref at top level
 
@@ -356,7 +384,10 @@ const LearningSupport = () => {
     {
       id: 6,
       course: "DSA",
-      topics: ["Linked Lists - Singly Linked List", "Linked Lists - Doubly Linked List"],
+      topics: [
+        "Linked Lists - Singly Linked List",
+        "Linked Lists - Doubly Linked List",
+      ],
       classType: "doubt",
       description: "Need clarification on pointer operations in linked lists",
       status: "cancelled",
@@ -368,7 +399,8 @@ const LearningSupport = () => {
       rating: null,
       completedDate: null,
       closedDate: null,
-      cancellationReason: "Student was not present at the scheduled date and time (Nov 18, 2025 at 2:00 PM). Request has been closed.",
+      cancellationReason:
+        "Student was not present at the scheduled date and time (Nov 18, 2025 at 2:00 PM). Request has been closed.",
     },
   ]);
 
@@ -430,7 +462,6 @@ const LearningSupport = () => {
     setSelectedCourse(courseValue);
     setSelectedTopics([]);
     setTopicToAdd("");
-    setStatusMessage(null);
   };
 
   const addTopic = (topicValue) => {
@@ -447,18 +478,41 @@ const LearningSupport = () => {
     setSelectedTopics((s) => s.filter((t) => t.id !== id));
   };
 
+  const handleScreenshotUpload = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach((file) => {
+      if (file && file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setScreenshots((prev) => [
+            ...prev,
+            {
+              id: Date.now() + Math.random(),
+              file: file,
+              preview: reader.result,
+            },
+          ]);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+    // Reset input
+    e.target.value = "";
+  };
+
+  const removeScreenshot = (id) => {
+    setScreenshots((prev) => prev.filter((s) => s.id !== id));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (selectedTopics.length === 0) {
-      setStatusMessage({
-        type: "error",
-        text: "Please add at least one topic.",
-      });
+      toast.error("Please add at least one topic.");
       return;
     }
     if (!classType) {
-      setStatusMessage({ type: "error", text: "Please select a class type." });
+      toast.error("Please select a class type.");
       return;
     }
 
@@ -486,17 +540,13 @@ const LearningSupport = () => {
     };
     setSubmittedRequests((prev) => [newRequest, ...prev]);
 
-    setStatusMessage({
-      type: "success",
-      text: "Request submitted successfully.",
-    });
+    toast.success("Request submitted successfully!");
 
     // Clear form
     setSelectedTopics([]);
     setClassType("");
     setDescription("");
-
-    // Switch to submitted tab after 2 seconds
+    setScreenshots([]); // Switch to submitted tab after 2 seconds
     setTimeout(() => {
       setActiveTab("submitted");
       setStatusMessage(null);
@@ -538,11 +588,12 @@ const LearningSupport = () => {
 
   return (
     <div className="min-h-screen py-4 px-4">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-8xl mx-auto">
         {/* Toggle Slider Header */}
         <div className="mb-4">
           <div className="flex items-center justify-center mb-4">
-            <div className="relative flex items-center  bg-gray-200 rounded-full p-1 shadow-inner w-[70%]" >
+            <div className="relative flex items-center  bg-gray-200 rounded-full p-1 shadow-inner w-[70%]">
               {/* Slider Background */}
               <div
                 className={`absolute top-1 bottom-1 rounded-full bg-indigo-500 transition-all duration-300 ease-in-out ${
@@ -550,7 +601,7 @@ const LearningSupport = () => {
                 }`}
                 style={{ width: "calc(50% - 4px)" }}
               />
-              
+
               {/* Toggle Buttons */}
               <button
                 onClick={() => setActiveTab("create")}
@@ -561,11 +612,10 @@ const LearningSupport = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  
                   <span>How can we help you?</span>
                 </div>
               </button>
-              
+
               <button
                 onClick={() => setActiveTab("submitted")}
                 className={`relative z-10 px-6 py-2 w-full flex justify-center rounded-full text-sm font-semibold transition-all duration-300 ${
@@ -575,25 +625,15 @@ const LearningSupport = () => {
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-                    />
-                  </svg>
+                  <HiClipboardList className="w-4 h-4" />
                   <span>View Raised Requests</span>
-                  <span className={`ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                  activeTab === "submitted"
-                    ? "bg-white bg-opacity-30 text-white"
-                    : "bg-gray-300 text-gray-700"
-                }`}>
+                  <span
+                    className={`ml-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      activeTab === "submitted"
+                        ? "bg-white bg-opacity-30 text-indigo-600"
+                        : "bg-gray-300 text-gray-700"
+                    }`}
+                  >
                     {statusCounts.all}
                   </span>
                 </div>
@@ -611,214 +651,183 @@ const LearningSupport = () => {
           </div>
         </div>
 
-          {/* Tab Content */}
-          {activeTab === "create" ? (
-            <form onSubmit={handleSubmit} className="p-6">
-              {/* 2 Column Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Class Type Selection */}
-                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <svg
-                      className="w-5 h-5 text-indigo-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
-                    <label className="block text-sm font-semibold text-gray-900">
-                      Class Type
-                    </label>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* Doubt Class Card */}
-                    <div
-                      onClick={() => setClassType("doubt")}
-                      className={`cursor-pointer rounded-lg p-4 border-2 transition-all ${
-                        classType === "doubt"
-                          ? "border-indigo-600 bg-indigo-50 shadow-md"
-                          : "border-gray-300 bg-white hover:border-indigo-400 hover:shadow-sm"
-                      }`}
-                    >
-                      <div className="flex flex-col items-center text-center gap-2">
-                        <div
-                          className={`text-3xl ${
-                            classType === "doubt" ? "scale-110" : ""
-                          } transition-transform`}
-                        >
-                          💡
-                        </div>
-                        <div
-                          className={`font-semibold ${
-                            classType === "doubt"
-                              ? "text-indigo-900"
-                              : "text-gray-900"
-                          }`}
-                        >
-                          Raise a Doubt
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          Get technical help for Specific Topics
-                        </div>
+        {/* Tab Content */}
+        {activeTab === "create" ? (
+          <form onSubmit={handleSubmit} className="p-6">
+            {/* Single Column Layout */}
+            <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+              {/* Class Type Selection */}
+              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <BiSolidCategory className="w-5 h-5 text-indigo-600" />
+                  <label className="block text-sm font-semibold text-gray-900">
+                    Class Type
+                  </label>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Doubt Class Card */}
+                  <div
+                    onClick={() => setClassType("doubt")}
+                    className={`cursor-pointer rounded-lg p-4 border-2 transition-all ${
+                      classType === "doubt"
+                        ? "border-indigo-600 bg-indigo-50 shadow-md"
+                        : "border-gray-300 bg-white hover:border-indigo-400 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div
+                        className={`text-3xl ${
+                          classType === "doubt" ? "scale-110" : ""
+                        } transition-transform`}
+                      >
+                        💡
+                      </div>
+                      <div
+                        className={`font-semibold ${
+                          classType === "doubt"
+                            ? "text-indigo-900"
+                            : "text-gray-900"
+                        }`}
+                      >
+                        Raise a Doubt
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Get technical help for Specific Topics
                       </div>
                     </div>
+                  </div>
 
-                    {/* Backup Class Card */}
-                    <div
-                      onClick={() => setClassType("backup")}
-                      className={`cursor-pointer rounded-lg p-4 border-2 transition-all ${
-                        classType === "backup"
-                          ? "border-indigo-600 bg-indigo-50 shadow-md"
-                          : "border-gray-300 bg-white hover:border-indigo-400 hover:shadow-sm"
-                      }`}
-                    >
-                      <div className="flex flex-col items-center text-center gap-2">
-                        <div
-                          className={`text-3xl ${
-                            classType === "backup" ? "scale-110" : ""
-                          } transition-transform`}
-                        >
-                          📚
-                        </div>
-                        <div
-                          className={`font-semibold ${
-                            classType === "backup"
-                              ? "text-indigo-900"
-                              : "text-gray-900"
-                          }`}
-                        >
-                          Request Backup Class
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          Schedule an extra session for a topic or chapter you missed
-                        </div>
+                  {/* Backup Class Card */}
+                  <div
+                    onClick={() => setClassType("backup")}
+                    className={`cursor-pointer rounded-lg p-4 border-2 transition-all ${
+                      classType === "backup"
+                        ? "border-indigo-600 bg-indigo-50 shadow-md"
+                        : "border-gray-300 bg-white hover:border-indigo-400 hover:shadow-sm"
+                    }`}
+                  >
+                    <div className="flex flex-col items-center text-center gap-2">
+                      <div
+                        className={`text-3xl ${
+                          classType === "backup" ? "scale-110" : ""
+                        } transition-transform`}
+                      >
+                        📚
+                      </div>
+                      <div
+                        className={`font-semibold ${
+                          classType === "backup"
+                            ? "text-indigo-900"
+                            : "text-gray-900"
+                        }`}
+                      >
+                        Request Backup Class
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        Schedule an extra session for a topic or chapter you
+                        missed
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Topic Selection Section */}
+              {/* Course Selection - Show only if class type is selected */}
+              {classType && (
                 <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <FaBook className="text-indigo-600" />
-                      <label className="block text-sm font-semibold text-gray-900">
-                        Select Course
-                      </label>
-                    </div>
-                    <div className="flex justify-around gap-2 mb-3">
-                      {/* Show only Completed or inprogress Courses */}
-
-                      {Courses.map((course) => (
-                        <div
-                          key={course.id}
-                          className="flex items-center gap-2 cursor-pointer"
-                        >
-                          <input
-                            type="radio"
-                            name="course"
-                            id={course.id}
-                            value={course.id}
-                            checked={selectedCourse === course.id}
-                            onChange={(e) => handleCourseChange(e.target.value)}
-                            disabled={course.status === "Not Started"}
-                          />
-                          <span
-                            className={`${
-                              course.status === "Not Started"
+                  <div className="flex items-center gap-2 mb-4">
+                    <FaBook className="text-indigo-600" />
+                    <label className="block text-sm font-semibold text-gray-900">
+                      Select Course
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {Courses.map((course) => (
+                      <div
+                        key={course.id}
+                        onClick={() =>
+                          course.status !== "Not Started" &&
+                          handleCourseChange(course.id)
+                        }
+                        className={`cursor-pointer rounded-xl p-4 border-2 transition-all ${
+                          course.status === "Not Started"
+                            ? "border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed"
+                            : selectedCourse === course.id
+                            ? "border-indigo-600 bg-indigo-50 shadow-md"
+                            : "border-gray-300 bg-white hover:border-indigo-400 hover:shadow-sm"
+                        }`}
+                      >
+                        <div className="flex flex-col items-center text-center gap-2">
+                          <div className="text-2xl">📖</div>
+                          <div
+                            className={`font-semibold text-sm ${
+                              selectedCourse === course.id
+                                ? "text-indigo-900"
+                                : course.status === "Not Started"
                                 ? "text-gray-400"
-                                : ""
+                                : "text-gray-900"
                             }`}
                           >
                             {course.name}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="w-[90%] border-b-1 mx-auto my-3 text-gray-300"></div>
-                  <div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <svg
-                        className="w-5 h-5 text-indigo-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                        />
-                      </svg>
-                      <label className="block text-sm font-semibold text-gray-900">
-                        Select Topics
-                      </label>
-                      {!selectedCourse ? (
-                        <span className="text-xs text-amber-600 font-medium">
-                          (Select a course first)
-                        </span>
-                      ) : (
-                        <p className="text-xs text-gray-500 flex items-center gap-1">
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
+                          </div>
+                          <div
+                            className={`text-xs px-2 py-0.5 rounded-full ${
+                              course.status === "Completed"
+                                ? "bg-green-100 text-green-700"
+                                : course.status === "In Progress"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-gray-200 text-gray-500"
+                            }`}
                           >
-                            <path
-                              fillRule="evenodd"
-                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          Click on any lecture from the dropdown to add it. You
-                          can add multiple topics.
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1" ref={topicSelectRef}>
-                        <SearchableTopicSelect
-                          topicOptions={topicOptions}
-                          searchTerm={topicToAdd}
-                          setSearchTerm={setTopicToAdd}
-                          onPick={(value) => {
-                            addTopic(value);
-                          }}
-                          disabled={!selectedCourse}
-                        />
+                            {course.status}
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
+              )}
 
-                {/* Selected Topics Display */}
-                <div
-                  className={`bg-indigo-50 rounded-xl p-5 border border-indigo-200 h-55 ${
-                    (classType === "backup" || classType === "") &&"lg:col-span-2"
-                  }`}
-                >
+              {/* Topic Selection & Selected Topics Combined - Show only if course is selected */}
+              {selectedCourse && (
+                <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-200">
+                  {/* Topic Selection Dropdown */}
                   <div className="flex items-center gap-2 mb-3">
-                    <svg
+                    <MdSchool
                       className="w-5 h-5 text-indigo-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    />
+                    <label className="block text-sm font-semibold text-gray-900">
+                      Add Topics
+                    </label>
+                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <MdSchedule
+                        className="w-4 h-4"
                       />
-                    </svg>
+                      Click to select topics from the dropdown
+                    </p>
+                  </div>
+                  <div className="flex gap-2 mb-4">
+                    <div className="relative flex-1" ref={topicSelectRef}>
+                      <SearchableTopicSelect
+                        topicOptions={topicOptions}
+                        searchTerm={topicToAdd}
+                        setSearchTerm={setTopicToAdd}
+                        onPick={(value) => {
+                          addTopic(value);
+                        }}
+                        disabled={false}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t-2 border-indigo-300 my-4"></div>
+
+                  {/* Selected Topics Display */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <MdCheckBox
+                      className="w-5 h-5 text-indigo-600"
+                    />
                     <label className="block text-sm font-semibold text-gray-900">
                       Selected Topics
                       {selectedTopics.length > 0 && (
@@ -832,19 +841,9 @@ const LearningSupport = () => {
                     <div className="flex flex-wrap gap-2 min-h-[60px]">
                       {selectedTopics.length === 0 && (
                         <div className="w-full flex items-center justify-center py-6 text-sm text-gray-400 italic">
-                          <svg
+                          <MdSchedule
                             className="w-5 h-5 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                            />
-                          </svg>
+                          />
                           No topics selected yet. Start by selecting from above.
                         </div>
                       )}
@@ -861,385 +860,317 @@ const LearningSupport = () => {
                             className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
                             aria-label={`Remove ${t.label}`}
                           >
-                            <svg
+                            <MdClose
                               className="w-3 h-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={3}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
+                            />
                           </button>
                         </span>
                       ))}
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Description Section */}
-                {classType === "doubt" && (
-                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 h-55">
+              {/* Description Section - Show only if topics are selected */}
+              {classType === "doubt" && selectedTopics.length > 0 && (
+                <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <MdEdit
+                      className="w-5 h-5 text-indigo-600"
+                    />
+                    <label className="block text-sm font-semibold text-gray-900">
+                      Describe your Doubt
+                    </label>
+                    <span className="text-xs text-gray-500">(Optional)</span>
+                  </div>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={5}
+                    className="w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                    placeholder="Explain why you need this class or what specific topics you want covered...
+
+Example: I'm struggling with 2D arrays implementation and need more practice problems."
+                  />
+                  <div className="mt-3">
                     <div className="flex items-center gap-2 mb-3">
-                      <svg
+                      <MdImage
                         className="w-5 h-5 text-indigo-600"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
+                      />
                       <label className="block text-sm font-semibold text-gray-900">
-                        Describe your Doubt
+                        Upload Screenshots
                       </label>
                       <span className="text-xs text-gray-500">(Optional)</span>
                     </div>
-                    <textarea
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      rows={5}
-                      className="w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Explain why you need this class or what specific topics you want covered...
 
-Example: I'm struggling with 2D arrays implementation and need more practice problems."
-                    />
-                  </div>
-                )}
-
-                {/* Status Message */}
-                {statusMessage && (
-                  <div
-                    className={`lg:col-span-2 px-5 py-4 rounded-xl text-sm font-medium flex items-center gap-3 ${
-                      statusMessage.type === "error"
-                        ? "bg-red-50 text-red-700 border border-red-200"
-                        : "bg-green-50 text-green-700 border border-green-200"
-                    }`}
-                  >
-                    {statusMessage.type === "error" ? (
-                      <svg
-                        className="w-5 h-5 flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                          clipRule="evenodd"
+                    {/* Upload Button */}
+                    <div className="mb-3">
+                      <label className="cursor-pointer inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors">
+                        <MdAdd
+                          className="w-5 h-5 mr-2"
                         />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-5 h-5 flex-shrink-0"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                          clipRule="evenodd"
+                        Add Screenshot
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleScreenshotUpload}
+                          className="hidden"
+                          multiple={false}
                         />
-                      </svg>
-                    )}
-                    <span>{statusMessage.text}</span>
-                  </div>
-                )}
-
-                {/* Submit Button */}
-                <div className="lg:col-span-2 flex items-center justify-between pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-500">
-                    Your request will be reviewed by the faculty team
-                  </p>
-                  <button
-                    type="submit"
-                    className="inline-flex items-center px-8 py-3 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-md hover:shadow-lg"
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      />
-                    </svg>
-                    Submit Request
-                  </button>
-                </div>
-              </div>
-            </form>
-          ) : (
-            /* Submitted Requests View */
-            <div className="p-2">
-              {/* Status Filter Buttons */}
-              <div className="mb-6 p-2 ">
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setStatusFilter("all")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "all"
-                        ? "bg-indigo-100 text-indigo-700 border-2 border-indigo-200 shadow-sm"
-                        : "bg-white text-gray-700 border border-gray-300 hover:border-indigo-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
-                    All Requests
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "all"
-                          ? "bg-indigo-100 text-indigo-700"
-                          : "bg-gray-100"
-                      }`}
-                    >
-                      {statusCounts.all}
-                    </span>
-                  </button>
-                  
-                  <button
-                    onClick={() => setStatusFilter("pending")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "pending"
-                        ? "bg-amber-100 text-amber-700 border-2 border-amber-200 shadow-sm"
-                        : "bg-white text-amber-700 border border-amber-200 hover:border-amber-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Pending
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "pending"
-                          ? "bg-amber-100 text-amber-700"
-                          : "bg-amber-100"
-                      }`}
-                    >
-                      {statusCounts.pending}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setStatusFilter("approved")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "approved"
-                        ? "bg-green-100 text-green-700 border-2 border-green-200 shadow-sm"
-                        : "bg-white text-green-700 border border-green-200 hover:border-green-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Approved
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "approved"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-green-100"
-                      }`}
-                    >
-                      {statusCounts.approved}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setStatusFilter("completed")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "completed"
-                        ? "bg-blue-100 text-blue-700 border-2 border-blue-200 shadow-sm"
-                        : "bg-white text-blue-700 border border-blue-200 hover:border-blue-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Completed
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "completed"
-                          ? "bg-blue-100 text-blue-700"
-                          : "bg-blue-100"
-                      }`}
-                    >
-                      {statusCounts.completed}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setStatusFilter("closed")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "closed"
-                        ? "bg-purple-100 text-purple-700 border-2 border-purple-200 shadow-sm"
-                        : "bg-white text-purple-700 border border-purple-200 hover:border-purple-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Closed
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "closed"
-                          ? "bg-purple-100 text-purple-700"
-                          : "bg-purple-100"
-                      }`}
-                    >
-                      {statusCounts.closed}
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={() => setStatusFilter("cancelled")}
-                    className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                      statusFilter === "cancelled"
-                        ? "bg-red-100 text-red-700 border-2 border-red-200 shadow-sm"
-                        : "bg-white text-red-700 border border-red-200 hover:border-red-300"
-                    }`}
-                  >
-                    <svg
-                      className="w-4 h-4 mr-1.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Cancelled
-                    <span
-                      className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
-                        statusFilter === "cancelled"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-red-100"
-                      }`}
-                    >
-                      {statusCounts.cancelled}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {submittedRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <svg
-                    className="w-16 h-16 mx-auto text-gray-400 mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No Requests Yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    You haven't submitted any learning support requests.
-                  </p>
-                  <button
-                    onClick={() => setActiveTab("create")}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
-                  >
-                    Create Your First Request
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredRequests.length === 0 ? (
-                    <div className="text-center py-12">
-                      <svg
-                        className="w-16 h-16 mx-auto text-gray-400 mb-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        No {statusFilter === "all" ? "" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Requests
-                      </h3>
-                      <p className="text-gray-500 mb-4">
-                        {statusFilter === "all"
-                          ? "You haven't submitted any learning support requests yet."
-                          : `No requests with "${statusFilter}" status found.`}
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Upload one screenshot at a time (PNG, JPG, etc.)
                       </p>
-                      {statusFilter !== "all" && (
-                        <button
-                          onClick={() => setStatusFilter("all")}
-                          className="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
-                        >
-                          View All Requests
-                        </button>
-                      )}
                     </div>
-                  ) : (
-                    filteredRequests.map((request) => (
+
+                    {/* Screenshot Preview Grid */}
+                    {screenshots.length > 0 && (
+                      <div className="flex flex-wrap gap-3">
+                        {screenshots.map((screenshot) => (
+                          <div
+                            key={screenshot.id}
+                            className="relative w-32 h-32 rounded-lg border-2 border-gray-300 overflow-hidden group"
+                          >
+                            <img
+                              src={screenshot.preview}
+                              alt="Screenshot"
+                              className="w-full h-full object-cover"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeScreenshot(screenshot.id)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              aria-label="Remove screenshot"
+                            >
+                              <MdClose
+                                className="w-4 h-4"
+                              />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+               {/* Screenshot Upload Section */}
+                  
+
+              {/* Submit Button - Show only if topics are selected */}
+              {selectedTopics.length > 0 && (
+                <div className="pt-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-500">
+                      Your request will be reviewed by the faculty team
+                    </p>
+                    <button
+                      type="submit"
+                      className="inline-flex items-center px-8 py-3 bg-indigo-500 text-white font-medium rounded-lg hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-md hover:shadow-lg whitespace-nowrap"
+                    >
+                      <MdSend className="w-5 h-5 mr-2" />
+                      Submit Request
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </form>
+        ) : (
+          /* Submitted Requests View */
+          <div className="p-2">
+            {/* Status Filter Buttons */}
+            <div className="mb-6 p-2 ">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setStatusFilter("all")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "all"
+                      ? "bg-indigo-100 text-indigo-700 border-2 border-indigo-200 shadow-sm"
+                      : "bg-white text-gray-700 border border-gray-300 hover:border-indigo-300"
+                  }`}
+                >
+                  <MdList
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  All Requests
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "all"
+                        ? "bg-indigo-500 text-indigo-100"
+                        : "bg-gray-100"
+                    }`}
+                  >
+                    {statusCounts.all}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setStatusFilter("pending")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "pending"
+                      ? "bg-amber-100 text-amber-700 border-2 border-amber-200 shadow-sm"
+                      : "bg-white text-amber-700 border border-amber-200 hover:border-amber-300"
+                  }`}
+                >
+                  <MdSchedule
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  Pending
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "pending"
+                        ? "bg-amber-500 text-amber-100"
+                        : "bg-amber-100"
+                    }`}
+                  >
+                    {statusCounts.pending}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setStatusFilter("approved")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "approved"
+                      ? "bg-green-100 text-green-700 border-2 border-green-200 shadow-sm"
+                      : "bg-white text-green-700 border border-green-200 hover:border-green-300"
+                  }`}
+                >
+                  <MdCheckCircle
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  Approved
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "approved"
+                        ? "bg-green-500 text-green-100"
+                        : "bg-green-100"
+                    }`}
+                  >
+                    {statusCounts.approved}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setStatusFilter("completed")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "completed"
+                      ? "bg-blue-100 text-blue-700 border-2 border-blue-200 shadow-sm"
+                      : "bg-white text-blue-700 border border-blue-200 hover:border-blue-300"
+                  }`}
+                >
+                  <MdCheckBox
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  Completed
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "completed"
+                        ? "bg-blue-500 text-blue-100"
+                        : "bg-blue-100"
+                    }`}
+                  >
+                    {statusCounts.completed}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setStatusFilter("closed")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "closed"
+                      ? "bg-purple-100 text-purple-700 border-2 border-purple-200 shadow-sm"
+                      : "bg-white text-purple-700 border border-purple-200 hover:border-purple-300"
+                  }`}
+                >
+                  <MdLock
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  Closed
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "closed"
+                        ? "bg-purple-500 text-purple-100"
+                        : "bg-purple-100"
+                    }`}
+                  >
+                    {statusCounts.closed}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setStatusFilter("cancelled")}
+                  className={`inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                    statusFilter === "cancelled"
+                      ? "bg-red-100 text-red-700 border-2 border-red-200 shadow-sm"
+                      : "bg-white text-red-700 border border-red-200 hover:border-red-300"
+                  }`}
+                >
+                  <MdCancel
+                    className="w-4 h-4 mr-1.5"
+                  />
+                  Cancelled
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium ${
+                      statusFilter === "cancelled"
+                        ? "bg-red-500 text-red-100"
+                        : "bg-red-100"
+                    }`}
+                  >
+                    {statusCounts.cancelled}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {submittedRequests.length === 0 ? (
+              <div className="text-center py-12">
+                <HiDocumentText
+                  className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                />
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  No Requests Yet
+                </h3>
+                <p className="text-gray-500 mb-4">
+                  You haven't submitted any learning support requests.
+                </p>
+                <button
+                  onClick={() => setActiveTab("create")}
+                  className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
+                >
+                  Create Your First Request
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredRequests.length === 0 ? (
+                  <div className="text-center py-12">
+                    <HiDocumentText
+                      className="w-16 h-16 mx-auto text-gray-400 mb-4"
+                    />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      No{" "}
+                      {statusFilter === "all"
+                        ? ""
+                        : statusFilter.charAt(0).toUpperCase() +
+                          statusFilter.slice(1)}{" "}
+                      Requests
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      {statusFilter === "all"
+                        ? "You haven't submitted any learning support requests yet."
+                        : `No requests with "${statusFilter}" status found.`}
+                    </p>
+                    {statusFilter !== "all" && (
+                      <button
+                        onClick={() => setStatusFilter("all")}
+                        className="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
+                      >
+                        View All Requests
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  filteredRequests.map((request) => (
                     <div
                       key={request.id}
                       className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
@@ -1294,19 +1225,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                               onClick={() => handleMarkComplete(request.id)}
                               className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-lg border border-green-200 hover:bg-green-100 transition-colors flex items-center gap-1"
                             >
-                              <svg
+                              <MdCheckCircle
                                 className="w-3 h-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
+                              />
                               Close Ticket
                             </button>
                           )}
@@ -1314,19 +1235,13 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                           {/* Rating Stars for Closed Requests */}
                           {request.status === "closed" && request.rating && (
                             <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <svg
-                                  key={star}
-                                  className={`w-4 h-4 ${
-                                    star <= request.rating
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                              ))}
+                              {[1, 2, 3, 4, 5].map((star) =>
+                                star <= request.rating ? (
+                                  <MdStar key={star} className="w-4 h-4 text-yellow-400" />
+                                ) : (
+                                  <MdStarBorder key={star} className="w-4 h-4 text-gray-300" />
+                                )
+                              )}
                               <span className="text-xs text-gray-600 ml-1">
                                 ({request.rating}/5)
                               </span>
@@ -1356,19 +1271,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                           <div className="flex gap-2">
                             {/* Class Schedule */}
                             <div className="flex-1 bg-green-50 border border-green-200 rounded-lg p-2 flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-green-600 flex-shrink-0"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
+                              <MdSchedule
+                                className="w-4 h-4 text-green-600 shrink-0"
+                              />
                               <div>
                                 <p className="text-xs font-semibold text-green-800">
                                   Class Scheduled
@@ -1388,23 +1293,11 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                             {/* Class Mode */}
                             {request.classMode && (
                               <div className="flex-1 bg-indigo-50 border border-indigo-200 rounded-lg p-2 flex items-center gap-2">
-                                <svg
-                                  className="w-4 h-4 text-indigo-600 flex-shrink-0"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d={
-                                      request.classMode === "online"
-                                        ? "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                                        : "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                                    }
-                                  />
-                                </svg>
+                                {request.classMode === "online" ? (
+                                  <MdVideoCall className="w-4 h-4 text-indigo-600 shrink-0" />
+                                ) : (
+                                  <MdSchool className="w-4 h-4 text-indigo-600 shrink-0" />
+                                )}
                                 <div>
                                   <p className="text-xs font-semibold text-indigo-800">
                                     {request.classMode === "online"
@@ -1438,17 +1331,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                         request.completedDate && (
                           <div className="space-y-2">
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 flex items-center gap-2">
-                              <svg
+                              <MdCheckCircle
                                 className="w-4 h-4 text-blue-600"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
+                              />
                               <div className="flex-1">
                                 <p className="text-xs font-semibold text-blue-800">
                                   Class Completed
@@ -1467,19 +1352,13 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                                   <span className="text-xs font-semibold text-gray-700">
                                     Your Rating:
                                   </span>
-                                  {[1, 2, 3, 4, 5].map((star) => (
-                                    <svg
-                                      key={star}
-                                      className={`w-4 h-4 ${
-                                        star <= request.rating
-                                          ? "text-yellow-500 fill-current"
-                                          : "text-gray-300"
-                                      }`}
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
-                                  ))}
+                                  {[1, 2, 3, 4, 5].map((star) =>
+                                    star <= request.rating ? (
+                                      <MdStar key={star} className="w-4 h-4 text-yellow-500" />
+                                    ) : (
+                                      <MdStarBorder key={star} className="w-4 h-4 text-gray-300" />
+                                    )
+                                  )}
                                   <span className="text-xs text-gray-600 ml-1">
                                     ({request.rating}/5)
                                   </span>
@@ -1494,17 +1373,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                           <div className="grid grid-cols-2 gap-2">
                             {request.completedDate && (
                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 flex items-center gap-1.5">
-                                <svg
-                                  className="w-3.5 h-3.5 text-blue-600 flex-shrink-0"
-                                  fill="currentColor"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path
-                                    fillRule="evenodd"
-                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                    clipRule="evenodd"
-                                  />
-                                </svg>
+                                <MdCheckCircle
+                                  className="w-3.5 h-3.5 text-blue-600 shrink-0"
+                                />
                                 <div>
                                   <p className="text-xs font-semibold text-blue-800">
                                     Completed on
@@ -1518,17 +1389,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                               </div>
                             )}
                             <div className="bg-purple-50 border border-purple-200 rounded-lg p-2 flex items-center gap-1.5">
-                              <svg
-                                className="w-3.5 h-3.5 text-purple-600 flex-shrink-0"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
+                              <MdCheckCircle
+                                className="w-3.5 h-3.5 text-purple-600 shrink-0"
+                              />
                               <div>
                                 <p className="text-xs font-semibold text-purple-800">
                                   Closed on
@@ -1551,19 +1414,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                             {request.scheduledDate && (
                               <div className="grid grid-cols-2 gap-2">
                                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 flex items-center gap-2">
-                                  <svg
+                                  <MdSchedule
                                     className="w-4 h-4 text-orange-600 shrink-0"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
-                                  </svg>
+                                  />
                                   <div>
                                     <p className="text-xs font-semibold text-orange-800">
                                       Was Scheduled
@@ -1583,23 +1436,11 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                                 {/* Class Mode */}
                                 {request.classMode && (
                                   <div className="bg-orange-50 border border-orange-200 rounded-lg p-2 flex items-center gap-2">
-                                    <svg
-                                      className="w-4 h-4 text-orange-600 shrink-0"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d={
-                                          request.classMode === "online"
-                                            ? "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                                            : "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                                        }
-                                      />
-                                    </svg>
+                                    {request.classMode === "online" ? (
+                                      <MdVideoCall className="w-4 h-4 text-orange-600 shrink-0" />
+                                    ) : (
+                                      <MdSchool className="w-4 h-4 text-orange-600 shrink-0" />
+                                    )}
                                     <div>
                                       <p className="text-xs font-semibold text-orange-800">
                                         {request.classMode === "online"
@@ -1608,7 +1449,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                                       </p>
                                       {request.location && (
                                         <p className="text-xs text-orange-700 truncate">
-                                          {request.classMode === "online" ? "Meeting Link" : request.location}
+                                          {request.classMode === "online"
+                                            ? "Meeting Link"
+                                            : request.location}
                                         </p>
                                       )}
                                     </div>
@@ -1619,17 +1462,9 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
 
                             {/* Cancellation reason */}
                             <div className="bg-red-50 border border-red-200 rounded-lg p-2 flex items-start gap-2">
-                              <svg
+                              <MdCancel
                                 className="w-4 h-4 text-red-600 mt-0.5 shrink-0"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                              >
-                                <path
-                                  fillRule="evenodd"
-                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                  clipRule="evenodd"
-                                />
-                              </svg>
+                              />
                               <div>
                                 <p className="text-xs font-semibold text-red-800">
                                   Request Cancelled
@@ -1643,11 +1478,11 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                         )}
                     </div>
                   ))
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Rating Modal */}
@@ -1674,19 +1509,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                   }}
                   className="text-white hover:bg-white hover:text-indigo-600 hover:bg-opacity-20 rounded-full p-2 transition-all"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <MdClose className="w-6 h-6" />
                 </button>
               </div>
               {/* Decorative circles */}
@@ -1710,16 +1533,13 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                       onMouseLeave={() => setHoverRating(0)}
                       className="transition-all duration-200 hover:scale-125 active:scale-110 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 rounded-full"
                     >
-                      <svg
+                      <MdStar
                         className={`w-14 h-14 ${
                           star <= (hoverRating || rating)
                             ? "text-yellow-400 fill-current drop-shadow-lg"
                             : "text-gray-300"
                         } transition-all duration-200`}
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
+                      />
                     </button>
                   ))}
                 </div>
@@ -1743,19 +1563,7 @@ Example: I'm struggling with 2D arrays implementation and need more practice pro
                   disabled={rating === 0}
                   className="flex-1 px-6 py-3.5 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-600 hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
+                  <MdCheck className="w-5 h-5" />
                   Submit
                 </button>
               </div>
@@ -1819,19 +1627,9 @@ function SearchableTopicSelect({
   return (
     <div className="relative" ref={wrapperRef}>
       <div className="relative">
-        <svg
+        <MdSearch
           className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
+        />
         <input
           type="text"
           value={searchTerm}
@@ -1870,13 +1668,9 @@ function SearchableTopicSelect({
             return (
               <li key={g.stepId} className="border-b last:border-b-0">
                 <div className="px-4 py-2.5 bg-indigo-50 text-sm font-semibold text-indigo-900 cursor-default flex items-center gap-2">
-                  <svg
+                  <MdLibraryBooks
                     className="w-4 h-4 text-indigo-600"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
-                  </svg>
+                  />
                   {headerLabel}
                 </div>
 
@@ -1893,17 +1687,9 @@ function SearchableTopicSelect({
                         }}
                         className="pl-8 pr-4 py-2.5 text-sm hover:bg-indigo-50 cursor-pointer text-gray-700 flex items-center gap-2 transition-colors group"
                       >
-                        <svg
+                        <MdChevronRight
                           className="w-3 h-3 text-gray-400 group-hover:text-indigo-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                        />
                         <span className="group-hover:text-indigo-900 group-hover:font-medium">
                           {String(child.label).split(" - ")[1] || child.label}
                         </span>
