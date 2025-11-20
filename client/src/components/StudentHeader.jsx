@@ -108,6 +108,25 @@ const StudentHeader = () => {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
+  // Get greeting based on IST time
+  const getGreeting = () => {
+    const now = new Date();
+    // Convert to IST (UTC+5:30)
+    const istOffset = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+    const istTime = new Date(now.getTime() + istOffset);
+    const hours = istTime.getUTCHours();
+
+    if (hours >= 5 && hours < 12) {
+      return "Good Morning";
+    } else if (hours >= 12 && hours < 17) {
+      return "Good Afternoon";
+    } else if (hours >= 17 && hours < 21) {
+      return "Good Evening";
+    } else {
+      return "Good Night";
+    }
+  };
+
   // map notification category to an icon
   const getNotifIcon = (category) => {
     switch (category) {
@@ -143,7 +162,8 @@ const StudentHeader = () => {
         <div className="flex gap-3">
           <div onClick={() => setShowProfile(true)} className="cursor-pointer">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            Welcome back, {student.name}{" "}
+            {getGreeting()}, {student.name}{" "}
+            <span className="text-2xl">👋</span>
           </h2>
         </div>
 
