@@ -76,7 +76,7 @@ const Course = () => {
   ];
 
   return (
-<div className="bg-green-50 rounded-2xl mt-5 shadow px-6 py-6 w-full mx-auto">
+<div className="bg-green-50 rounded-2xl mt-5 shadow px-6 w-[95%] mx-auto">
     <div className="min-h-screen  py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}

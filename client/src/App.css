@@ -1,10 +1,44 @@
 @import "tailwindcss";
 
-
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Thin horizontal scrollbar for category row (WebKit browsers) */
+.no-scrollbar::-webkit-scrollbar {
+  height: 6px;
+}
+.no-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.6);
+  border-radius: 9999px;
+}
+.no-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Firefox */
+.no-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.6) transparent;
+}
+
+/* Notification dot pulse: scales from 0 -> 100% and back */
+.notif-dot {
+  transform-origin: center;
+  display: inline-block;
+  animation: notifPulse 1600ms ease-in-out infinite;
+}
+
+@keyframes notifPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

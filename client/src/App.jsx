@@ -10,6 +10,7 @@ import DataScience from "./components/CoursePages/dataScience.jsx"
 
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
           <Route path="/courses/oop" element={<OOP />} />
           <Route path="/courses/aptitute" element={<Aptitute />} />
           <Route path="/courses/data-science" element={<DataScience />} />
+          <Route path="*" element={<NotFoundPage category="Page" message="The page you are looking for does not exist." />} />
+          <Route path="/empty" element={<NotFoundPage category="Pending" message="You don't have any pending items." />} />
+
         </Routes>
       </Router>
     </>
