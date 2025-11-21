@@ -11,10 +11,10 @@ const Dashboard = () => {
     },
     {
       id: 2,
-      title: "Courses Completed",
+      title: "Assignment Status",
       value: "5/8",
-      subtitle: "Ongoing progress",
-      icon: "✅",
+      subtitle: "Completed",
+      icon: "📝",
     },
     {
       id: 3,
