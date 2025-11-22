@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, use } from "react";
 import { FaBook } from "react-icons/fa6";
 import toast, { Toaster } from "react-hot-toast";
 import {
@@ -11,14 +11,12 @@ import {
   MdSchedule,
   MdCheckBox,
   MdCancel,
-  MdLocationOn,
   MdVideoCall,
   MdSchool,
   MdSearch,
   MdAdd,
   MdStar,
   MdStarBorder,
-  MdPending,
   MdLock,
   MdLibraryBooks,
   MdChevronRight,
@@ -27,10 +25,10 @@ import {
   MdInsertDriveFile,
   MdPictureAsPdf,
 } from "react-icons/md";
+import { IoIosAddCircle } from "react-icons/io";
 import { HiClipboardList } from "react-icons/hi";
 import { BiSolidCategory } from "react-icons/bi";
-import { FaInbox } from "react-icons/fa";
-import { HiDocumentText } from "react-icons/hi2";
+import NotFoundPage from "../../pages/NotFoundPage";
 
 const LearningSupport = () => {
   const Courses = [
@@ -294,6 +292,16 @@ const LearningSupport = () => {
 
   // Status filter state
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Typing effect state
+  const [displayedText, setDisplayedText] = useState("");
+  const [textIndex, setTextIndex] = useState(0);
+
+  // Text content for typing effect
+  const typingTexts = {
+    create: "Get instant help - Request a Doubt Session or Book a Backup Class",
+    submitted: "Track and manage your learning support requests"
+  };
 
   // Mock submitted requests data
   const [submittedRequests, setSubmittedRequests] = useState([
@@ -604,6 +612,48 @@ const LearningSupport = () => {
     setRating(0);
   };
 
+  // Handler to clear requests of the current category
+  const handleClearCategory = () => {
+    if (statusFilter === "all") {
+      setSubmittedRequests([]);
+    } else {
+      setSubmittedRequests((prev) =>
+        prev.filter((req) => req.status !== statusFilter)
+      );
+    }
+  };
+
+  useEffect(() => {
+    setActiveTab("create");
+  }, []);
+
+  // Typing effect
+  useEffect(() => {
+    const currentText = typingTexts[activeTab];
+    
+    if (textIndex < currentText.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(currentText.substring(0, textIndex + 1));
+        setTextIndex(textIndex + 1);
+      }, 50); // Typing speed in milliseconds
+
+      return () => clearTimeout(timeout);
+    } else {
+      // After typing is complete, wait 3 seconds then restart
+      const restartTimeout = setTimeout(() => {
+        setDisplayedText("");
+        setTextIndex(0);
+      }, 3000);
+      return () => clearTimeout(restartTimeout);
+    }
+  }, [textIndex, activeTab, typingTexts]);
+
+  // Reset typing effect when tab changes
+  useEffect(() => {
+    setDisplayedText("");
+    setTextIndex(0);
+  }, [activeTab]);
+
   return (
     <div className="bg-green-50 rounded-2xl mt-5 shadow px-6 w-[95%] mx-auto">
       <div className="min-h-screen py-4 px-4">
@@ -631,7 +681,8 @@ const LearningSupport = () => {
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    <span>How can we help you?</span>
+                    <IoIosAddCircle className="w-4 h-4" />
+                    <span>Get Learning Support</span>
                   </div>
                 </button>
 
@@ -662,14 +713,12 @@ const LearningSupport = () => {
 
             {/* Section Title */}
             <div className="text-center mb-4">
-              <p className="text-sm text-gray-600">
-                {activeTab === "create"
-                  ? "Need help with a topic? Request a Doubt or Backup class"
-                  : "Track and manage your learning support requests"}
+              <p className="text-sm text-gray-600 min-h-5">
+                {displayedText}
+                <span className="animate-pulse ">|</span>
               </p>
             </div>
           </div>
-
           {/* Tab Content */}
           {activeTab === "create" ? (
             <form onSubmit={handleSubmit} className="p-6">
@@ -1153,50 +1202,34 @@ const LearningSupport = () => {
               </div>
 
               {submittedRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <HiDocumentText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No Requests Yet
-                  </h3>
-                  <p className="text-gray-500 mb-4">
-                    You haven't submitted any learning support requests.
-                  </p>
-                  <button
-                    onClick={() => setActiveTab("create")}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors"
-                  >
-                    Create Your First Request
-                  </button>
-                </div>
+                <NotFoundPage
+                  category="All Requests"
+                  message="You haven't submitted any learning support requests yet. Click 'Get Learning Support' to create your first request."
+                />
               ) : (
                 <div className="space-y-3">
                   {filteredRequests.length === 0 ? (
-                    <div className="text-center py-12">
-                      <HiDocumentText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        No{" "}
-                        {statusFilter === "all"
-                          ? ""
-                          : statusFilter.charAt(0).toUpperCase() +
-                            statusFilter.slice(1)}{" "}
-                        Requests
-                      </h3>
-                      <p className="text-gray-500 mb-4">
-                        {statusFilter === "all"
-                          ? "You haven't submitted any learning support requests yet."
-                          : `No requests with "${statusFilter}" status found.`}
-                      </p>
-                      {statusFilter !== "all" && (
-                        <button
-                          onClick={() => setStatusFilter("all")}
-                          className="inline-flex items-center px-4 py-2 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors"
-                        >
-                          View All Requests
-                        </button>
-                      )}
-                    </div>
+                    <NotFoundPage
+                      category={statusFilter === "all" ? "All Requests" : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1) + " Requests"}
+                      message={
+                        statusFilter === "all"
+                          ? "You haven't submitted any learning support requests yet. Start by creating a new request."
+                          : statusFilter === "pending"
+                          ? "No pending requests found. All your requests have been processed or you haven't created any pending requests yet."
+                          : statusFilter === "approved"
+                          ? "No approved requests found. Your requests are either still pending or have been completed."
+                          : statusFilter === "completed"
+                          ? "No completed requests found. Complete your approved classes to see them here."
+                          : statusFilter === "closed"
+                          ? "No closed requests found. Rate your completed classes to close them and see them here."
+                          : statusFilter === "cancelled"
+                          ? "No cancelled requests found. This is a good thing! Keep attending your scheduled classes."
+                          : "No requests found for this category."
+                      }
+                    />
                   ) : (
-                    filteredRequests.map((request) => (
+                    <>
+                    {filteredRequests.map((request) => (
                       <div
                         key={request.id}
                         className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow"
@@ -1505,7 +1538,20 @@ const LearningSupport = () => {
                             </div>
                           )}
                       </div>
-                    ))
+                    ))}
+                    
+                    {/* Check Button - For UI Testing Only */}
+                    <div className="flex justify-center mt-6 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={handleClearCategory}
+                        className="px-6 py-2.5 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                        title="Check Button - For UI Testing Only"
+                      >
+                        <MdCheck className="w-4 h-4" />
+                        Check - Clear {statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)} Requests
+                      </button>
+                    </div>
+                    </>
                   )}
                 </div>
               )}

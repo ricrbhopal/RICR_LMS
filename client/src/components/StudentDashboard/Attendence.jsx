@@ -616,7 +616,7 @@ const Attendence = () => {
                       onClick={() => handleCourseClick(c)}
                       className={`px-3 py-2 rounded-lg border ${
                         selectedCourse === c
-                          ? "bg-blue-100 text-blue-700 border-transparent"
+                          ? "bg-indigo-100 text-indigo-700 border-transparent"
                           : "bg-white text-gray-700 border-gray-200"
                       } shadow-sm`}
                     >
@@ -628,7 +628,7 @@ const Attendence = () => {
                 {/* Right sidebar: calendar + notice */}
                 <div className="bg-white rounded-2xl p-6 shadow ">
                   <div className="flex items-center justify-between mb-4 ">
-                    <div className="flex items-center gap-3 mx-auto">
+                    <div className="flex items-center justify-between gap-3 w-full">
                       <button
                         onClick={prevMonth}
                         aria-label="Previous month"
