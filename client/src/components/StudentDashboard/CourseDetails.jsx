@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { FaBook, FaVideo, FaLaptopCode } from "react-icons/fa6";
-import { FaEdit, FaInfoCircle } from "react-icons/fa";
+import { FaEdit, FaInfoCircle, FaJava } from "react-icons/fa";
 import { IoIosStar, IoIosLock } from "react-icons/io";
+import { IoArrowBackCircleOutline } from "react-icons/io5";
+import TopicDescription from "./SubSections/TopicDescription";
+import VideoModal from "./SubSections/VideoModal";
+import TopicQuiz from "./SubSections/TopicQuiz";
+import NotesModal from "./SubSections/NotesModal";
+import InfoModal from "./SubSections/InfoModal";
 
-/**
- * CourseProgressFiveStyled.jsx
- * - 5 stacked dropdowns
- * - when expanded, shows table-like lecture list with icons, difficulty badges and star rating
- * - Tailwind CSS required
- */
+const CourseDetails = ({ course, close }) => {
+  const [topicDescriptionProgress, setTopicDescriptionProgress] = useState(0);
 
-const CourseProgressFiveStyled = () => {
   const steps = [
     { id: 1, title: "Intro", progress: 25 },
     { id: 2, title: "Conditional Statements", progress: 67 },
@@ -37,6 +38,13 @@ const CourseProgressFiveStyled = () => {
     "Rating",
   ];
 
+  const [showTopicDescription, setShowTopicDescription] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showQuizModal, setShowQuizModal] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedLecture, setSelectedLecture] = useState(null);
+
   const [openSteps, setOpenSteps] = useState(() =>
     steps.reduce((acc, s) => ((acc[s.id] = false), acc), {})
   );
@@ -44,6 +52,35 @@ const CourseProgressFiveStyled = () => {
   const [activeTabs, setActiveTabs] = useState(() =>
     steps.reduce((acc, s) => ((acc[s.id] = "Lecture"), acc), {})
   );
+
+  if (showTopicDescription) {
+    return (
+      <TopicDescription
+        onBack={() => setShowTopicDescription(false)}
+        onProgressUpdate={(progress) => setTopicDescriptionProgress(progress)}
+      />
+    );
+  }
+
+  const openVideo = (lecture) => {
+    setSelectedLecture(lecture);
+    setShowVideoModal(true);
+  };
+
+  const openQuiz = (lecture) => {
+    setSelectedLecture(lecture);
+    setShowQuizModal(true);
+  };
+
+  const openNotes = (lecture) => {
+    setSelectedLecture(lecture);
+    setShowNotesModal(true);
+  };
+
+  const openInfo = (lecture) => {
+    setSelectedLecture(lecture);
+    setShowInfoModal(true);
+  };
 
   const toggleOpen = (id) =>
     setOpenSteps((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -64,13 +101,34 @@ const CourseProgressFiveStyled = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-10">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-6">Data Science</h1>
+    <div className="py-3 px-3 min-h-screen">
+      <div className="bg-[#caeaff] opacity-100 py-2 sticky top-0 z-40 flex items-center gap-3">
+        {close && (
+          <div className="px-1 py-3">
+            <button onClick={close} className="">
+              <IoArrowBackCircleOutline className="text-3xl text-blue-500  hover:text-blue-700" />
+            </button>
+          </div>
+        )}
+        <div className="w-full">
+          <div className="flex items-center gap-4">
+            <FaJava className="text-5xl text-orange-600" />
+            <div className="w-full flex items-center justify-between mb-2">
+              <div>
+                <h1 className="text-4xl font-bold text-gray-900">
+                  {course.title}
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-h-screen overflow-y-auto">
         {steps.map((step) => (
           <div
             key={step.id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden my-3 mx-3 "
           >
             {/* Header */}
             <div className="border-b border-gray-200">
@@ -179,52 +237,61 @@ const CourseProgressFiveStyled = () => {
 
                           {/* Doc */}
                           <div className="col-span-1 flex justify-center">
-                            <div
-                              className="w-8 h-8  flex items-center justify-center"
+                            <button
+                              onClick={() => setShowTopicDescription(true)}
+                              className={`w-8 h-8 flex items-center justify-center transition-colors cursor-pointer ${
+                                topicDescriptionProgress === 100
+                                  ? "text-green-600 hover:text-green-700"
+                                  : "hover:text-orange-600"
+                              }`}
                               title="Click to view document on new Page"
                             >
                               <FaBook />
-                            </div>
+                            </button>
                           </div>
 
                           {/* Video */}
                           <div className="col-span-1 flex justify-center">
-                            <div
-                              className="w-8 h-8  flex items-center justify-center"
+                            <button
+                              onClick={() => openVideo(lec)}
+                              className="w-8 h-8 flex items-center justify-center hover:text-purple-600 transition-colors cursor-pointer"
                               title="Click to view video (DRM Protected) in a modal can only be assecible if student submitted the Ratings"
                             >
                               <FaVideo />
-                            </div>
+                            </button>
                           </div>
 
                           {/* Quiz/Problem */}
                           <div className="col-span-1 flex justify-center">
-                            <div
-                              className="w-8 h-8  flex items-center justify-center"
+                            <button
+                              onClick={() => openQuiz(lec)}
+                              className="w-8 h-8 flex items-center justify-center hover:text-green-600 transition-colors cursor-pointer"
                               title="Click to take quiz or solve problem on new Page"
                             >
                               <FaLaptopCode />
-                            </div>
+                            </button>
                           </div>
 
                           {/* Notes */}
                           <div className="col-span-1 flex justify-center">
-                            <div
-                              className="w-8 h-8  flex items-center justify-center"
+                            <button
+                              onClick={() => openNotes(lec)}
+                              className="w-8 h-8 flex items-center justify-center hover:text-indigo-600 transition-colors cursor-pointer"
                               title="Click to view or add notes in a modal which can be editable and saved"
                             >
                               <FaEdit />
-                            </div>
+                            </button>
                           </div>
 
                           {/* Info */}
                           <div className="col-span-1 flex justify-center">
-                            <div
-                              className="w-8 h-8  flex items-center justify-center"
+                            <button
+                              onClick={() => openInfo(lec)}
+                              className="w-8 h-8 flex items-center justify-center hover:text-blue-600 transition-colors cursor-pointer"
                               title="Modal with Faculty name, start & end date, Student attendance"
                             >
                               <FaInfoCircle />
-                            </div>
+                            </button>
                           </div>
 
                           {/* Rating */}
@@ -258,14 +325,43 @@ const CourseProgressFiveStyled = () => {
             )}
           </div>
         ))}
-
-        {/* Global bottom remark */}
-        <div className="mt-2 bg-white/0 text-center text-sm text-gray-500">
-          {/* optional footer */}
-        </div>
       </div>
+
+      {/* Modals */}
+      {showVideoModal && selectedLecture && (
+        <VideoModal
+          lecture={selectedLecture}
+          onClose={() => setShowVideoModal(false)}
+        />
+      )}
+
+      {showQuizModal && selectedLecture && (
+        <TopicQuiz
+          lecture={selectedLecture}
+          onClose={() => setShowQuizModal(false)}
+          onRetryFromStart={() => {
+            setShowQuizModal(false);
+            setSelectedLecture(null);
+            setShowTopicDescription(true);
+          }}
+        />
+      )}
+
+      {showNotesModal && selectedLecture && (
+        <NotesModal
+          lecture={selectedLecture}
+          onClose={() => setShowNotesModal(false)}
+        />
+      )}
+
+      {showInfoModal && selectedLecture && (
+        <InfoModal
+          lecture={selectedLecture}
+          onClose={() => setShowInfoModal(false)}
+        />
+      )}
     </div>
   );
 };
 
-export default CourseProgressFiveStyled;
+export default CourseDetails;

@@ -125,9 +125,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 min-h-screen">
       <div className="max-w-8xl mx-auto">
-        <div className="bg-green-50 rounded-2xl shadow px-6 pt-1 pb-6">
+        <div className="bg-[#caeaff] rounded-2xl shadow px-6 pt-1 pb-6">
           <div className="grid md:grid-cols-4 gap-6 mt-6">
             <div className="grid md:col-span-3 gap-6">
               {/* Weekly activity + Cards */}

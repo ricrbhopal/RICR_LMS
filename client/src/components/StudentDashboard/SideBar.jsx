@@ -34,14 +34,14 @@ const Sidebar = ({ active, setActive }) => {
   return (
     <>
       <div
-        className={`h-screen bg-white shadow-lg transition-all duration-300 p-2 ${
+        className={`h-screen bg-white shadow-lg transition-all duration-300 p-2 overflow-hidden fixed left-0 z-50 scrollbar-hide ${
           isExpanded ? "w-64" : "w-20"
         }`}
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
 
-        <div className="mt-8 space-y-2">
+        <div className="mt-8 space-y-2 overflow-y-auto h-[calc(100vh-8rem)] scrollbar-hide">
           {menuItems.map((item, index) => (
             <div
               key={index}

@@ -655,14 +655,14 @@ const LearningSupport = () => {
   }, [activeTab]);
 
   return (
-    <div className="bg-green-50 rounded-2xl mt-5 shadow px-6 w-[95%] mx-auto">
+    <div className="bg-[#caeaff] rounded-2xl mt-5 shadow px-6 w-[95%] mx-auto">
       <div className="min-h-screen py-4 px-4">
         <Toaster position="top-center" reverseOrder={false} />
         <div className="max-w-8xl mx-auto">
           {/* Toggle Slider Header */}
           <div className="mb-4">
             <div className="flex items-center justify-center mb-4">
-              <div className="relative flex items-center  bg-gray-200 rounded-full p-1 shadow-inner w-[70%]">
+              <div className="relative flex items-center  bg-white rounded-full p-1 shadow-inner w-[70%]">
                 {/* Slider Background */}
                 <div
                   className={`absolute top-1 bottom-1 rounded-full bg-indigo-500 transition-all duration-300 ease-in-out ${
@@ -858,7 +858,7 @@ const LearningSupport = () => {
 
                 {/* Topic Selection & Selected Topics Combined - Show only if course is selected */}
                 {selectedCourse && (
-                  <div className="bg-indigo-50 rounded-xl p-5 border border-indigo-200">
+                  <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
                     {/* Topic Selection Dropdown */}
                     <div className="flex items-center gap-2 mb-3">
                       <MdSchool className="w-5 h-5 text-indigo-600" />
@@ -1561,7 +1561,7 @@ const LearningSupport = () => {
 
         {/* Rating Modal */}
         {showRatingModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9998] p-4 animate-fadeIn">
             <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-slideUp">
               {/* Modal Header with Gradient */}
               <div className="bg-indigo-500 px-6 py-8 relative">
@@ -1727,7 +1727,7 @@ function SearchableTopicSelect({
       </div>
 
       {open && !disabled && filteredGroups.length > 0 && (
-        <ul className="absolute z-20 left-0 right-0 mt-2 max-h-64 overflow-auto rounded-lg border-2 border-indigo-200 bg-white shadow-xl">
+        <ul className="absolute z-[1000] left-0 right-0 mt-2 max-h-64 overflow-auto rounded-lg border-2 border-indigo-200 bg-white shadow-xl">
           {filteredGroups.map((g) => {
             // determine header label (step title) from a step-only item if present
             const stepOnly =

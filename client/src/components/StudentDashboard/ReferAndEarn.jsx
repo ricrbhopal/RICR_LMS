@@ -167,7 +167,7 @@ const ReferAndEarn = () => {
   };
 
   return (
-    <div className="bg-green-50 rounded-2xl mt-5 shadow p-6 w-[95%] mx-auto">
+    <div className="bg-[#caeaff] rounded-2xl mt-5 shadow p-6 w-[95%] mx-auto">
       <div className="mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-3xl font-bold text-gray-800">
@@ -498,7 +498,7 @@ const ReferAndEarn = () => {
 
       {/* Cashback Policy Modal */}
       {showPolicyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9998] p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
             {/* Modal Header */}
             <div className="bg-linear-to-r from-blue-600 to-indigo-600 text-white px-6 py-5 flex items-center justify-between sticky top-0">
@@ -649,7 +649,7 @@ const ReferAndEarn = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center">
+                <div className="bg-linear-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center">
                   <p className="text-sm text-gray-600">
                     For any questions or clarifications regarding this policy, please contact our support team.
                   </p>

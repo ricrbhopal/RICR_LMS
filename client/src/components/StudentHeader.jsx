@@ -152,7 +152,7 @@ const StudentHeader = () => {
       {/* Notification Overlay */}
       {showNotifications && (
         <div
-          className="fixed inset-0 bg-black/40 z-40"
+          className="fixed inset-0 bg-black/40 z-[1000]"
           onClick={() => setShowNotifications(false)}
         />
       )}
@@ -207,7 +207,7 @@ const StudentHeader = () => {
               <div
                 ref={notifRef}
                 onClick={(e) => e.stopPropagation()}
-                className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/15 overflow-hidden z-50"
+                className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/15 overflow-hidden z-[1001]"
               >
                 <div className="px-4 py-3 border-b">
                   <div className="text-sm font-medium">Notifications</div>
@@ -348,7 +348,7 @@ const StudentHeader = () => {
       {/* Profile modal - shows when header or avatar clicked */}
       {showProfile && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 "
+          className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/40 "
           onClick={() => setShowProfile(false)}
         >
           <div

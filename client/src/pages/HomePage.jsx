@@ -1,16 +1,16 @@
-import React from 'react'
-import Navbar from '../components/Navbar.jsx'
+import React from "react";
+import Navbar from "../components/Navbar.jsx";
 
-import StudentDashboardPage from './StudentDashboardPage.jsx'
+import StudentDashboardPage from "./StudentDashboardPage.jsx";
 
 const HomePage = () => {
   return (
     <>
-        <Navbar />
+      <div className="max-h-screen">
         <StudentDashboardPage />
-
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default HomePage 
+export default HomePage;

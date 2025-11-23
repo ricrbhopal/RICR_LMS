@@ -10,16 +10,26 @@ import ReferAndEarn from "../components/StudentDashboard/ReferAndEarn.jsx";
 import Cashback from "../components/StudentDashboard/Cashback.jsx";
 const StudentDashboardPage = () => {
   const [active, setActive] = React.useState("Dashboard");
+  const [coursesKey, setCoursesKey] = React.useState(0);
+
+  const handleSetActive = (newActive) => {
+    // If Courses is clicked, increment key to force remount
+    if (newActive === "Courses") {
+      setCoursesKey(prev => prev + 1);
+    }
+    setActive(newActive);
+  };
+
   return (
     <>
       <div className="flex">
-        <div className="relative w-20 z-99">
-          <SideBar active={active} setActive={setActive} className="absolute" />
+        <div className="w-20 shrink-0">
+          <SideBar active={active} setActive={handleSetActive} />
         </div>
     
-        <div className="w-full">
+        <div className="w-full max-h-[90vh] overflow-y-auto">
           {active === "Dashboard" && <Dashboard />}
-          {active === "Courses" && <Courses />}
+          {active === "Courses" && <Courses key={coursesKey} />}
           {active === "Attendence" && <Attendence />}
           {active === "Progress Tracker" && <ProgressTracker />}
           {active === "Learning Support" && <LearningSupport />}

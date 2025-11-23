@@ -1,28 +1,11 @@
 @import "tailwindcss";
 
-.scrollbar-hide::-webkit-scrollbar {
+*::-webkit-scrollbar {
   display: none;
 }
-.scrollbar-hide {
+* {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* Thin horizontal scrollbar for category row (WebKit browsers) */
-.no-scrollbar::-webkit-scrollbar {
-  height: 6px;
-}
-.no-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.6);
-  border-radius: 9999px;
-}
-.no-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-/* Firefox */
-.no-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(99, 102, 241, 0.6) transparent;
 }
 
 /* Notification dot pulse: scales from 0 -> 100% and back */

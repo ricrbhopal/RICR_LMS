@@ -551,12 +551,12 @@ const Attendence = () => {
     : null;
 
   return (
-    <div className="bg-green-50  w-[95%] mx-auto rounded-2xl shadow mt-5">
+    <div className="bg-[#caeaff]  w-[95%] mx-auto rounded-2xl shadow mt-5">
       <div className="p-6 mx-auto w-fit">
         {/* Topic Modal */}
         {showTopicModal && (
           <div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]"
             onClick={() => setShowTopicModal(false)}
           >
             <div
