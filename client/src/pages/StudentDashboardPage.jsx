@@ -7,7 +7,8 @@ import ProgressTracker from "../components/StudentDashboard/ProgressTracker.jsx"
 import LearningSupport from "../components/StudentDashboard/LearningSupport.jsx";
 import JobsAndInternship from "../components/StudentDashboard/JobsAndInternship.jsx";
 import ReferAndEarn from "../components/StudentDashboard/ReferAndEarn.jsx";
-import Cashback from "../components/StudentDashboard/Cashback.jsx";
+
+
 const StudentDashboardPage = () => {
   const [active, setActive] = React.useState("Dashboard");
   const [coursesKey, setCoursesKey] = React.useState(0);

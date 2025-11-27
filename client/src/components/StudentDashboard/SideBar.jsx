@@ -5,7 +5,6 @@ import { RxDashboard } from "react-icons/rx";
 import { AiOutlineStock } from "react-icons/ai";
 import { BookOpen, CalendarCheck } from "lucide-react";
 import { PiSuitcaseSimpleLight } from "react-icons/pi";
-import { BsCash } from "react-icons/bs";
 import { CiGift } from "react-icons/ci";
 import { FaRegLightbulb } from "react-icons/fa6";
 import { LuLogOut } from "react-icons/lu";
@@ -26,7 +25,6 @@ const Sidebar = ({ active, setActive }) => {
       icon: <PiSuitcaseSimpleLight className="h-5 w-5" />,
       text: "Job & Internship",
     },
-    { icon: <BsCash className="h-5 w-5" />, text: "Cashbacks" },
     { icon: <CiGift className="h-5 w-5" />, text: "Refer & Earn" },
     { icon: <LuLogOut className="h-5 w-5" />, text: "Logout" },
   ];
