@@ -87,7 +87,7 @@ const TopicQuiz = ({ lecture, onClose, onRetryFromStart }) => {
 
   return (
     <div className="fixed inset-0 bg-black/85 z-9998 flex items-center justify-center p-4 pt-10">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col relative z-[9999]">
+      <div className="bg-white rounded-xl shadow-lg w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col relative z-9999">
         {/* Modal Header */}
         <div className="bg-linear-to-r from-green-100 to-teal-100 text-gray-800 px-5 py-3 flex items-center justify-between border-b">
           <div>

@@ -473,10 +473,10 @@ const TopicDescription = ({ onBack, onProgressUpdate }) => {
 
       {/* Knowledge Check Modal */}
       {currentQuiz !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[9998] flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col relative z-[9999]">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-9998 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col relative z-9999">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-blue-100 to-blue-200 text-gray-800 px-5 py-3 border-b">
+            <div className="bg-linear-to-r from-blue-100 to-blue-200 text-gray-800 px-5 py-3 border-b">
               <h2 className="text-lg font-semibold">
                 {knowledgeChecks[currentQuiz].title}
               </h2>

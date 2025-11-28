@@ -1561,7 +1561,7 @@ const LearningSupport = () => {
 
         {/* Rating Modal */}
         {showRatingModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9998] p-4 animate-fadeIn">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-9998 p-4 animate-fadeIn">
             <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all animate-slideUp">
               {/* Modal Header with Gradient */}
               <div className="bg-indigo-500 px-6 py-8 relative">
@@ -1727,7 +1727,7 @@ function SearchableTopicSelect({
       </div>
 
       {open && !disabled && filteredGroups.length > 0 && (
-        <ul className="absolute z-[1000] left-0 right-0 mt-2 max-h-64 overflow-auto rounded-lg border-2 border-indigo-200 bg-white shadow-xl">
+        <ul className="absolute z-999 left-0 right-0 mt-2 max-h-64 overflow-auto rounded-lg border-2 border-indigo-200 bg-white shadow-xl">
           {filteredGroups.map((g) => {
             // determine header label (step title) from a step-only item if present
             const stepOnly =

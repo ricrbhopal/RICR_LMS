@@ -556,7 +556,7 @@ const Attendence = () => {
         {/* Topic Modal */}
         {showTopicModal && (
           <div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]"
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-9998"
             onClick={() => setShowTopicModal(false)}
           >
             <div
