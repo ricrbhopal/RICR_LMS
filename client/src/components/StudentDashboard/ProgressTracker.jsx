@@ -16,7 +16,7 @@ const ProgressTracker = () => {
   const subjects = [
     { id: "Performance Overview", name: "Performance Overview", icon: "📊", color: "bg-purple-500" },
     { id: "Core Java", name: "Core Java", icon: "☕", color: "bg-orange-500" },
-    { id: "Java DSA", name: "Java DSA", icon: "🔷", color: "bg-blue-500" },
+    { id: "Java DSA", name: "Java DSA", icon: "⚙️", color: "bg-blue-500" },
     { id: "MERN Stack", name: "MERN Stack", icon: "🚀", color: "bg-green-500" },
   ];
 
@@ -626,21 +626,12 @@ const ProgressTracker = () => {
   const filteredData = getFilteredData();
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 p-5">
+    <div className="bg-[#caeaff] rounded-2xl mt-5 shadow p-6 w-[95%] mx-auto">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-5">
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">
-            Academic Progress Tracker
-          </h1>
-          <p className="text-gray-600">
-            Track your performance, projections, and areas of improvement
-          </p>
-        </div>
 
         {/* Subject Tabs - Sleek Pill Style */}
         <div className="mb-5">
-          <div className="bg-white rounded-2xl shadow-sm p-2 inline-flex gap-2">
+          <div className="bg-white rounded-2xl shadow-sm p-2 flex justify-evenly gap-2">
             {subjects.map((subject) => (
               <button
                 key={subject.id}
