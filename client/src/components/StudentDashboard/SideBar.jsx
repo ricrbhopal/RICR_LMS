@@ -2,12 +2,14 @@
 import React, { useState } from "react";
 
 import { RxDashboard } from "react-icons/rx";
-import { AiOutlineStock } from "react-icons/ai";
-import { BookOpen, CalendarCheck } from "lucide-react";
-import { PiSuitcaseSimpleLight } from "react-icons/pi";
-import { CiGift } from "react-icons/ci";
+import {
+  BookOpen,
+  CalendarCheck,
+  GraduationCap,
+  BriefcaseBusiness,
+  ChartSpline,
+} from "lucide-react";
 import { FaRegLightbulb } from "react-icons/fa6";
-import { LuLogOut } from "react-icons/lu";
 
 const Sidebar = ({ active, setActive }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -20,13 +22,12 @@ const Sidebar = ({ active, setActive }) => {
     { icon: <BookOpen className="h-5 w-5" />, text: "Courses" },
     { icon: <CalendarCheck className="h-5 w-5" />, text: "Attendence" },
     { icon: <FaRegLightbulb className="h-5 w-5" />, text: "Learning Support" },
-    { icon: <AiOutlineStock className="h-5 w-5" />, text: "Progress Tracker" },
+    { icon: <ChartSpline className="h-5 w-5" />, text: "Progress Tracker" },
     {
-      icon: <PiSuitcaseSimpleLight className="h-5 w-5" />,
+      icon: <BriefcaseBusiness className="h-5 w-5" />,
       text: "Job & Internship",
     },
-    { icon: <CiGift className="h-5 w-5" />, text: "Refer & Earn" },
-    { icon: <LuLogOut className="h-5 w-5" />, text: "Logout" },
+    { icon: <GraduationCap className="h-5 w-5" />, text: "Alumni" },
   ];
 
   return (
@@ -38,7 +39,6 @@ const Sidebar = ({ active, setActive }) => {
         onMouseEnter={() => setIsExpanded(true)}
         onMouseLeave={() => setIsExpanded(false)}
       >
-
         <div className="mt-8 space-y-2 overflow-y-auto h-[calc(100vh-8rem)] scrollbar-hide">
           {menuItems.map((item, index) => (
             <div

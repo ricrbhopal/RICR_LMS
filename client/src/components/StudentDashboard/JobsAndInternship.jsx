@@ -1,21 +1,5 @@
 import React, { useState } from "react";
-import {
-  FaBriefcase,
-  FaMapMarkerAlt,
-  FaRupeeSign,
-  FaClock,
-  FaGraduationCap,
-  FaBuilding,
-  FaCheckCircle,
-  FaFilter,
-  FaStar,
-  FaBookmark,
-  FaRegBookmark,
-  FaExternalLinkAlt,
-} from "react-icons/fa";
-import { MdWork } from "react-icons/md";
-import { TbUserShare } from "react-icons/tb";
-import { BiTime } from "react-icons/bi";
+import { FaBriefcase, FaStar, FaUserCheck, FaBookmark } from "react-icons/fa";
 
 const JobsAndInternship = () => {
   const [activeTab, setActiveTab] = useState("all");
@@ -60,7 +44,7 @@ const JobsAndInternship = () => {
       matchScore: 40,
       recommended: true,
       isReferral: false,
-      companyLogo: "🏢",
+      companyLogo: "https://placehold.co/600x400?text=TC",
     },
     {
       id: 2,
@@ -79,7 +63,7 @@ const JobsAndInternship = () => {
       matchScore: 100,
       recommended: true,
       isReferral: false,
-      companyLogo: "🚀",
+      companyLogo: "https://placehold.co/600x400?text=SH",
     },
     {
       id: 3,
@@ -98,7 +82,7 @@ const JobsAndInternship = () => {
       matchScore: 65,
       recommended: true,
       isReferral: true,
-      companyLogo: "💼",
+      companyLogo: "https://placehold.co/600x400?text=IS",
     },
     {
       id: 4,
@@ -118,7 +102,7 @@ const JobsAndInternship = () => {
       matchScore: 45,
       recommended: true,
       isReferral: false,
-      companyLogo: "📚",
+      companyLogo: "https://placehold.co/600x400?text=CL",
     },
     {
       id: 5,
@@ -136,7 +120,7 @@ const JobsAndInternship = () => {
       matchScore: 85,
       recommended: false,
       isReferral: true,
-      companyLogo: "🌐",
+      companyLogo: "https://placehold.co/600x400?text=WT",
     },
     {
       id: 6,
@@ -155,7 +139,7 @@ const JobsAndInternship = () => {
       matchScore: 87,
       recommended: true,
       isReferral: false,
-      companyLogo: "☁️",
+      companyLogo: "https://placehold.co/600x400?text=CN",
     },
   ];
 
@@ -199,7 +183,7 @@ const JobsAndInternship = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center gap-3">
               <div className="bg-green-50 p-3 rounded-lg">
-                <FaCheckCircle className="text-xl text-green-500" />
+                <FaStar className="text-xl text-green-500" />
               </div>
               <div>
                 <div className="text-xl font-semibold text-gray-800">
@@ -212,7 +196,7 @@ const JobsAndInternship = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
             <div className="flex items-center gap-3">
               <div className="bg-purple-50 p-3 rounded-lg">
-                <TbUserShare className="text-xl text-purple-500" />
+                <FaUserCheck className="text-xl text-purple-500" />
               </div>
               <div>
                 <div className="text-xl font-semibold text-gray-800">
@@ -244,20 +228,19 @@ const JobsAndInternship = () => {
             <div className="flex items-center gap-2">
               <div className="flex gap-2">
                 {[
-                  { id: "all", label: "All Jobs", icon: "📋" },
-                  { id: "recommended", label: "Recommended", icon: "⭐" },
-                  { id: "referral", label: "Referral", icon: "🎯" },
+                  { id: "all", label: "All Jobs" },
+                  { id: "recommended", label: "Recommended" },
+                  { id: "referral", label: "Referral" },
                 ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
                       activeTab === tab.id
                         ? "bg-blue-500 text-white shadow-sm"
                         : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    <span>{tab.icon}</span>
                     <span>{tab.label}</span>
                   </button>
                 ))}
@@ -284,7 +267,6 @@ const JobsAndInternship = () => {
         <div className="space-y-4">
           {filteredJobs.length === 0 ? (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-              <FaBriefcase className="text-5xl text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-600 mb-2">
                 No Jobs Found
               </h3>
@@ -308,35 +290,32 @@ const JobsAndInternship = () => {
                     <div className="flex-1">
                       {/* Company Logo, Name and Job Title */}
                       <div className="flex items-start gap-4 mb-3">
-                        <div className="bg-gray-50 rounded-xl p-3 flex items-center justify-center text-2xl border border-gray-100 flex-shrink-0">
-                          {job.companyLogo}
-                        </div>
+                        <img 
+                          src={job.companyLogo} 
+                          alt={job.company}
+                          className="w-16 h-16 rounded-xl object-cover border border-gray-200 shrink-0"
+                        />
                         <div className="flex-1">
                           <h3 className="text-lg font-semibold text-gray-800 mb-1 flex items-center gap-2 flex-wrap">
                             {job.title}
                             {job.isReferral && (
-                              <span className="bg-green-50 text-green-600 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200 flex items-center gap-1">
-                                <FaCheckCircle className="text-xs" /> Referral
+                              <span className="bg-green-50 text-green-600 text-xs font-medium px-2.5 py-1 rounded-full border border-green-200">
+                                Referral
                               </span>
                             )}
                             {job.recommended && (
-                              <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 border border-blue-200">
-                                <FaStar className="text-xs" /> Recommended
+                              <span className="bg-blue-50 text-blue-600 text-xs font-medium px-2.5 py-1 rounded-full border border-blue-200">
+                                Recommended
                               </span>
                             )}
                           </h3>
-                          <div className="flex items-center gap-3 text-gray-600 text-sm mb-3">
-                            <div className="flex items-center gap-1 text-gray-700 text-sm font-semibold">
-                              <FaBuilding className="text-gray-500" />{" "}
-                              {job.company}
-                            </div>
-
-                            <span className="flex items-center gap-1">
-                              <FaMapMarkerAlt /> {job.location}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <BiTime /> {job.postedDate}
-                            </span>
+                          <div className="text-gray-700 text-sm font-semibold mb-2">
+                            {job.company}
+                          </div>
+                          <div className="flex items-center gap-3 text-gray-600 text-xs">
+                            <span>{job.location}</span>
+                            <span>•</span>
+                            <span>{job.postedDate}</span>
                           </div>
                         </div>
                       </div>
@@ -366,22 +345,15 @@ const JobsAndInternship = () => {
                       </div>
 
                       {/* Job Additional Info */}
-                      <div className="flex flex-wrap items-center gap-4 text-sm">
-                        <span className="flex items-center gap-1 text-gray-700 font-semibold">
-                          <FaRupeeSign className="text-green-600" />{" "}
-                          {job.salary}
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700">
+                        <span className="font-semibold">
+                          ₹ {job.salary}
                         </span>
-                        <span className="flex items-center gap-1 text-gray-700">
-                          <MdWork /> {job.type}
-                        </span>
+                        <span>{job.type}</span>
                         {job.duration && (
-                          <span className="flex items-center gap-1 text-gray-700">
-                            <FaClock /> {job.duration}
-                          </span>
+                          <span>{job.duration}</span>
                         )}
-                        <span className="flex items-center gap-1 text-gray-700">
-                          <FaGraduationCap /> {job.experience}
-                        </span>
+                        <span>{job.experience}</span>
                         <span className="text-gray-500">
                           {job.applicants} applicants
                         </span>
@@ -401,27 +373,18 @@ const JobsAndInternship = () => {
                       </div>
 
                       {/* Action Buttons */}
-                      <button className="bg-blue-500 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-blue-600 transition-all flex items-center justify-center gap-2">
+                      <button className="bg-blue-500 text-white px-4 py-2.5 rounded-lg font-medium text-sm hover:bg-blue-600 transition-all">
                         Apply
-                        <FaExternalLinkAlt className="text-xs" />
                       </button>
                       <button
                         onClick={() => toggleBookmark(job.id)}
-                        className={`px-4 py-2.5 rounded-lg font-medium text-sm border transition-all flex items-center justify-center gap-2 ${
+                        className={`px-4 py-2.5 rounded-lg font-medium text-sm border transition-all ${
                           bookmarkedJobs.includes(job.id)
                             ? "bg-orange-50 border-orange-300 text-orange-600 hover:bg-orange-100"
                             : "bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50"
                         }`}
                       >
-                        {bookmarkedJobs.includes(job.id) ? (
-                          <>
-                            <FaBookmark /> Saved
-                          </>
-                        ) : (
-                          <>
-                            <FaRegBookmark /> Save
-                          </>
-                        )}
+                        {bookmarkedJobs.includes(job.id) ? "Saved" : "Save"}
                       </button>
                     </div>
                   </div>

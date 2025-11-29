@@ -14,10 +14,10 @@ const ProgressTracker = () => {
 
   // Subject tabs configuration
   const subjects = [
-    { id: "Performance Overview", name: "Performance Overview", icon: "📊", color: "bg-purple-500" },
-    { id: "Core Java", name: "Core Java", icon: "☕", color: "bg-orange-500" },
-    { id: "Java DSA", name: "Java DSA", icon: "⚙️", color: "bg-blue-500" },
-    { id: "MERN Stack", name: "MERN Stack", icon: "🚀", color: "bg-green-500" },
+    { id: "Performance Overview", name: "Performance Overview", color: "bg-purple-500" },
+    { id: "Core Java", name: "Core Java", color: "bg-orange-500" },
+    { id: "Java DSA", name: "Java DSA", color: "bg-blue-500" },
+    { id: "MERN Stack", name: "MERN Stack", color: "bg-green-500" },
   ];
 
   // Sample data for different subjects with their assessments
@@ -641,7 +641,7 @@ const ProgressTracker = () => {
                 }}
                 className={`relative flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 whitespace-nowrap ${
                   selectedSubject === subject.id
-                    ? "bg-purple-600 text-white shadow-lg shadow-blue-500/50"
+                    ? "bg-purple-200 text-purple-600 shadow-lg shadow-blue-500/50"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                 }`}
               >
@@ -667,20 +667,20 @@ const ProgressTracker = () => {
           // Individual Subject Tab Content
           <>
         {/* Overall Score with Progress Bar */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-5">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-5 border border-slate-100">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="text-lg font-semibold text-gray-700">
+              <h3 className="text-lg font-semibold text-slate-700">
                 Overall Performance
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-500">
                 {stats.totalObtained}/{stats.totalMax} marks obtained
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <FaTrophy className="text-3xl text-yellow-500" />
+              <FaTrophy className="text-3xl text-amber-400" />
               <div className="text-right">
-                <span className="text-4xl font-bold text-gray-900">
+                <span className="text-4xl font-bold text-slate-800">
                   {stats.overallPercentage.toFixed(1)}%
                 </span>
                 <span
@@ -694,14 +694,14 @@ const ProgressTracker = () => {
             </div>
           </div>
           {/* Thin Progress Bar */}
-          <div className="w-full bg-gray-200 rounded-full h-3">
+          <div className="w-full bg-slate-100 rounded-full h-3">
             <div
               className={`h-3 rounded-full transition-all duration-500 ${
                 stats.overallPercentage >= 85
-                  ? "bg-linear-to-r from-green-500 to-green-600"
+                  ? "bg-linear-to-r from-emerald-400 to-emerald-500"
                   : stats.overallPercentage >= 70
-                  ? "bg-linear-to-r from-blue-500 to-blue-600"
-                  : "bg-linear-to-r from-orange-500 to-orange-600"
+                  ? "bg-linear-to-r from-blue-400 to-blue-500"
+                  : "bg-linear-to-r from-amber-400 to-amber-500"
               }`}
               style={{ width: `${stats.overallPercentage}%` }}
             ></div>
@@ -709,8 +709,8 @@ const ProgressTracker = () => {
         </div>
 
         {/* Category Performance Overview */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-5">
-          <h2 className="text-xl font-bold text-gray-900 mb-5">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-5 border border-slate-100">
+          <h2 className="text-xl font-bold text-slate-800 mb-5">
             Category Performance
           </h2>
           <div
@@ -739,15 +739,15 @@ const ProgressTracker = () => {
                   }}
                   className={`border rounded-lg p-5 transition-all transform hover:scale-105 text-left ${
                     isSelected
-                      ? "border-blue-500 bg-blue-50 shadow-lg ring-2 ring-blue-500"
-                      : "hover:shadow-md hover:border-gray-400"
+                      ? "border-indigo-300 bg-indigo-50 shadow-md ring-2 ring-indigo-200"
+                      : "border-slate-200 hover:shadow-sm hover:border-slate-300 bg-white"
                   }`}
                 >
-                  <h3 className="text-sm font-semibold text-gray-700 mb-2 capitalize">
+                  <h3 className="text-sm font-semibold text-slate-700 mb-2 capitalize">
                     {category.replace(/([A-Z])/g, " $1").trim()}
                   </h3>
                   <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-slate-800">
                       {avg.toFixed(1)}%
                     </span>
                     <span
@@ -756,14 +756,14 @@ const ProgressTracker = () => {
                       {gradeInfo.grade}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="w-full bg-slate-100 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full ${
                         avg >= 85
-                          ? "bg-green-500"
+                          ? "bg-emerald-400"
                           : avg >= 70
-                          ? "bg-blue-500"
-                          : "bg-orange-500"
+                          ? "bg-blue-400"
+                          : "bg-amber-400"
                       }`}
                       style={{ width: `${avg}%` }}
                     ></div>
@@ -778,10 +778,10 @@ const ProgressTracker = () => {
           {/* Marksheet Section */}
           <div className="lg:col-span-2">
             {/* Marksheet Table */}
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-100">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-linear-to-r from-blue-500 to-blue-600 text-white">
+                  <thead className="bg-linear-to-r from-indigo-400 to-blue-400 text-white">
                     <tr>
                       <th className="px-5 py-3 text-left text-sm font-semibold">
                         S.No
@@ -809,36 +809,36 @@ const ProgressTracker = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-slate-100">
                     {filteredData.map((item, index) => {
                       const gradeInfo = getGrade(item.percentage);
                       return (
                         <tr
                           key={`${item.type}-${item.id}`}
-                          className="hover:bg-gray-50 transition-colors"
+                          className="hover:bg-slate-50 transition-colors"
                         >
-                          <td className="px-5 py-3 text-sm text-gray-700">
+                          <td className="px-5 py-3 text-sm text-slate-700">
                             {index + 1}
                           </td>
                           <td className="px-5 py-3">
-                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-700">
+                            <span className="text-xs font-semibold px-2 py-1 rounded-full bg-indigo-50 text-indigo-600">
                               {item.type}
                             </span>
                           </td>
-                          <td className="px-5 py-3 text-sm font-medium text-gray-900">
+                          <td className="px-5 py-3 text-sm font-medium text-slate-800">
                             {item.name}
                           </td>
-                          <td className="px-5 py-3 text-sm text-gray-600">
+                          <td className="px-5 py-3 text-sm text-slate-600">
                             {item.date}
                           </td>
-                          <td className="px-5 py-3 text-sm text-center font-semibold text-gray-700">
+                          <td className="px-5 py-3 text-sm text-center font-semibold text-slate-700">
                             {item.maxMarks}
                           </td>
-                          <td className="px-5 py-3 text-sm text-center font-semibold text-gray-900">
+                          <td className="px-5 py-3 text-sm text-center font-semibold text-slate-800">
                             {item.obtained}
                           </td>
                           <td className="px-5 py-3 text-sm text-center">
-                            <span className="font-bold text-gray-900">
+                            <span className="font-bold text-slate-800">
                               {item.percentage.toFixed(1)}%
                             </span>
                           </td>
@@ -862,10 +862,10 @@ const ProgressTracker = () => {
           <div className="space-y-5">
             {/* Areas of Improvement */}
             {improvements.length > 0 && (
-              <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
                 <div className="flex items-center gap-2 mb-5">
-                  <FaCheck className="text-xl text-green-500" />
-                  <h2 className="text-lg font-bold text-gray-900">
+                  <FaCheck className="text-xl text-emerald-500" />
+                  <h2 className="text-lg font-bold text-slate-800">
                     Areas of Improvement
                   </h2>
                 </div>
@@ -875,19 +875,19 @@ const ProgressTracker = () => {
                       key={index}
                       className={`p-5 rounded-lg border-l-4 ${
                         item.priority === "high"
-                          ? "border-red-500 bg-red-50"
-                          : "border-green-500 bg-green-50"
+                          ? "border-rose-400 bg-rose-50"
+                          : "border-emerald-400 bg-emerald-50"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <h3 className="text-sm font-semibold text-gray-900 capitalize">
+                        <h3 className="text-sm font-semibold text-slate-800 capitalize">
                           {item.category}
                         </h3>
                         <span
                           className={`text-xs font-bold px-2 py-1 rounded ${
                             item.priority === "high"
-                              ? "bg-red-200 text-red-700"
-                              : "bg-orange-200 text-orange-700"
+                              ? "bg-rose-100 text-rose-600"
+                              : "bg-amber-100 text-amber-600"
                           }`}
                         >
                           {item.priority === "high"
@@ -895,7 +895,7 @@ const ProgressTracker = () => {
                             : "Medium Priority"}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-xs text-slate-600">
                         Current Average: {item.score}%
                       </p>
                     </div>

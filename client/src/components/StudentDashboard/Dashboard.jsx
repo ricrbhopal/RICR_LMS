@@ -26,7 +26,7 @@ const Dashboard = () => {
     {
       id: 4,
       title: "Skills Acquired",
-      value: "15",
+      value: "7/15",
       subtitle: "Technical skills",
       icon: "🎯",
     },

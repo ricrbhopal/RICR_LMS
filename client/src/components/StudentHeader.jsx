@@ -2,17 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { HiChevronDown } from "react-icons/hi";
 
 import {
-  FiSearch,
   FiBell,
-  FiMessageCircle,
   FiCalendar,
   FiUserCheck,
   FiCheckCircle,
 } from "react-icons/fi";
 import { CiUnread } from "react-icons/ci";
 import { FaRupeeSign, FaBriefcase, FaBook, FaGift } from "react-icons/fa";
+import { useReferEarn } from "../contexts/ReferEarnContext";
 
-const StudentHeader = () => {
+const StudentHeader = ({ setActive }) => {
+  const { openReferEarn } = useReferEarn();
   const student = {
     name: "John Doe",
     year: "3rd year",
@@ -158,190 +158,202 @@ const StudentHeader = () => {
       )}
 
       <div className="flex justify-between">
-
         <div className="flex gap-3">
           <div onClick={() => setShowProfile(true)} className="cursor-pointer">
-          <h2 className="text-2xl font-bold flex items-center gap-2">
-            {getGreeting()}, {student.name}{" "}
-            <span className="text-2xl">👋</span>
-          </h2>
-        </div>
-
-        <div className="flex items-center gap-4 ">
-          <div
-            onClick={() => setShowProfile(true)}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <div className="h-6 border-l border-gray-500" />
-            <img
-              src={student.avatar}
-              alt="avatar"
-              className="h-10 w-10 rounded-full object-cover shadow"
-            />
-            <HiChevronDown className="w-4 h-4 text-gray-600" />
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              {getGreeting()}, {student.name}{" "}
+              <span className="text-2xl">👋</span>
+            </h2>
           </div>
-          <div ref={bellRef} className="relative">
-            <button
-              className="relative p-2 rounded-full bg-white hover:bg-gray-100"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowNotifications((s) => {
-                  const now = !s;
-                  if (now) {
-                    // when opening, show category cards and pre-select 'fees'
-                    setNotifViewMode("cards");
-                    setSelectedCategory("fees");
-                    setNotifFilter("fees");
-                  }
-                  return now;
-                });
-              }}
+          <div className="flex items-center gap-4 ">
+            <div
+              onClick={() => setShowProfile(true)}
+              className="flex items-center gap-2 cursor-pointer"
             >
-              <FiBell className="w-5 h-5 text-gray-700" />
-              {unreadTotal > 0 && (
-                <span className="absolute top-1 -right-0.2 inline-flex h-2 w-2 bg-red-500 rounded-full notif-dot" />
-              )}
-            </button>
-
-            {showNotifications && (
-              <div
-                ref={notifRef}
-                onClick={(e) => e.stopPropagation()}
-                className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/15 overflow-hidden z-1001"
+              <div className="h-6 border-l border-gray-500" />
+              <img
+                src={student.avatar}
+                alt="avatar"
+                className="h-10 w-10 rounded-full object-cover shadow"
+              />
+              <HiChevronDown className="w-4 h-4 text-gray-600" />
+            </div>
+            <div ref={bellRef} className="relative">
+              <button
+                className="relative p-2 rounded-full bg-white hover:bg-gray-100"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowNotifications((s) => {
+                    const now = !s;
+                    if (now) {
+                      // when opening, show category cards and pre-select 'fees'
+                      setNotifViewMode("cards");
+                      setSelectedCategory("fees");
+                      setNotifFilter("fees");
+                    }
+                    return now;
+                  });
+                }}
               >
-                <div className="px-4 py-3 border-b">
-                  <div className="text-sm font-medium">Notifications</div>
-                </div>
+                <FiBell className="w-5 h-5 text-gray-700" />
+                {unreadTotal > 0 && (
+                  <span className="absolute top-1 -right-0.2 inline-flex h-2 w-2 bg-red-500 rounded-full notif-dot" />
+                )}
+              </button>
 
-                {/* Category cards (grid); click a card to view its notifications */}
-                <div className="px-3 py-3">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {[
-                      {
-                        key: "fees",
-                        label: "Fee",
-                        color: "bg-rose-50 text-rose-600",
-                      },
-                      {
-                        key: "event",
-                        label: "Event",
-                        color: "bg-blue-50 text-blue-600",
-                      },
-                      {
-                        key: "leave",
-                        label: "Leave",
-                        color: "bg-amber-50 text-amber-700",
-                      },
-                      {
-                        key: "learning",
-                        label: "Learning",
-                        color: "bg-purple-50 text-purple-700",
-                      },
-                      {
-                        key: "Job & Internships",
-                        label: "Jobs",
-                        color: "bg-green-50 text-green-700",
-                      },
-                      {
-                        key: "cashbacks",
-                        label: "Cashbacks",
-                        color: "bg-fuchsia-50 text-fuchsia-700",
-                      },
-                    ].map((c) => (
-                      <div
-                        key={c.key}
-                        onClick={() => handleCardClick(c.key)}
-                        className={`cursor-pointer p-3 rounded-lg shadow-sm flex items-center gap-3 ${
-                          c.color
-                        } ${
-                          selectedCategory === c.key
-                            ? "ring-2 ring-purple-300 scale-105"
-                            : ""
-                        }`}
-                      >
-                        <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center">
-                          <div className="text-lg text-gray-700">
-                            {getNotifIcon(c.key)}
-                          </div>
-                        </div>
-                        <div className="">
-                          <div className="text-sm font-medium">{c.label}</div>
-                          <div className="text-xs text-gray-500 ">
-                            {getUnreadCount(c.key) > 0
-                              ? `${getUnreadCount(c.key)} unread`
-                              : ""}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+              {showNotifications && (
+                <div
+                  ref={notifRef}
+                  onClick={(e) => e.stopPropagation()}
+                  className="absolute right-0 mt-2 w-110 bg-white rounded-lg shadow-lg ring-1 ring-black/15 overflow-hidden z-1001"
+                >
+                  <div className="px-4 py-3 border-b">
+                    <div className="text-sm font-medium">Notifications</div>
                   </div>
 
-                  {/* when a category is selected, show header for that category above the list below */}
-                  {selectedCategory && (
-                    <div className="mt-3 flex items-center justify-between px-1 mb-2">
-                      <div className="flex items-center gap-3"></div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="max-h-64 overflow-y-auto">
-                  {notifications.filter((n) =>
-                    notifFilter === "all" ? true : n.category === notifFilter
-                  ).length === 0 ? (
-                    <div className="p-4 text-sm text-gray-500">
-                      No notifications in this category.
-                    </div>
-                  ) : (
-                    notifications
-                      .filter((n) =>
-                        notifFilter === "all"
-                          ? true
-                          : n.category === notifFilter
-                      )
-                      .map((n) => (
+                  {/* Category cards (grid); click a card to view its notifications */}
+                  <div className="px-3 py-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {[
+                        {
+                          key: "fees",
+                          label: "Fee",
+                          color: "bg-rose-50 text-rose-600",
+                        },
+                        {
+                          key: "event",
+                          label: "Event",
+                          color: "bg-blue-50 text-blue-600",
+                        },
+                        {
+                          key: "leave",
+                          label: "Leave",
+                          color: "bg-amber-50 text-amber-700",
+                        },
+                        {
+                          key: "learning",
+                          label: "Learning",
+                          color: "bg-purple-50 text-purple-700",
+                        },
+                        {
+                          key: "Job & Internships",
+                          label: "Jobs",
+                          color: "bg-green-50 text-green-700",
+                        },
+                        {
+                          key: "cashbacks",
+                          label: "Cashbacks",
+                          color: "bg-fuchsia-50 text-fuchsia-700",
+                        },
+                      ].map((c) => (
                         <div
-                          key={n.id}
-                          onClick={() => {
-                            if (!n.read) markAsRead(n.id);
-                          }}
-                          className="px-4 py-3 hover:bg-gray-50 flex items-start gap-3 cursor-pointer"
+                          key={c.key}
+                          onClick={() => handleCardClick(c.key)}
+                          className={`cursor-pointer p-3 rounded-lg shadow-sm flex items-center gap-3 ${
+                            c.color
+                          } ${
+                            selectedCategory === c.key
+                              ? "ring-2 ring-purple-300 scale-105"
+                              : ""
+                          }`}
                         >
-                          <div
-                            className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                              n.read ? "bg-gray-100 text-gray-400" : "bg-white"
-                            }`}
-                          >
-                            {n.read ? (
-                              <FiCheckCircle className="w-4 h-4 text-gray-400" />
-                            ) : (
-                              <CiUnread className="w-4 h-4 text-gray-400 " />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <div className="text-sm font-medium">{n.title}</div>
-                            <div className="text-xs text-gray-500">
-                              {n.desc}
+                          <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center">
+                            <div className="text-lg text-gray-700">
+                              {getNotifIcon(c.key)}
                             </div>
                           </div>
-                          <div className="text-xs text-gray-400">{n.time}</div>
+                          <div className="">
+                            <div className="text-sm font-medium">{c.label}</div>
+                            <div className="text-xs text-gray-500 ">
+                              {getUnreadCount(c.key) > 0
+                                ? `${getUnreadCount(c.key)} unread`
+                                : ""}
+                            </div>
+                          </div>
                         </div>
-                      ))
-                  )}
+                      ))}
+                    </div>
+
+                    {/* when a category is selected, show header for that category above the list below */}
+                    {selectedCategory && (
+                      <div className="mt-3 flex items-center justify-between px-1 mb-2">
+                        <div className="flex items-center gap-3"></div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="max-h-64 overflow-y-auto">
+                    {notifications.filter((n) =>
+                      notifFilter === "all" ? true : n.category === notifFilter
+                    ).length === 0 ? (
+                      <div className="p-4 text-sm text-gray-500">
+                        No notifications in this category.
+                      </div>
+                    ) : (
+                      notifications
+                        .filter((n) =>
+                          notifFilter === "all"
+                            ? true
+                            : n.category === notifFilter
+                        )
+                        .map((n) => (
+                          <div
+                            key={n.id}
+                            onClick={() => {
+                              if (!n.read) markAsRead(n.id);
+                            }}
+                            className="px-4 py-3 hover:bg-gray-50 flex items-start gap-3 cursor-pointer"
+                          >
+                            <div
+                              className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
+                                n.read
+                                  ? "bg-gray-100 text-gray-400"
+                                  : "bg-white"
+                              }`}
+                            >
+                              {n.read ? (
+                                <FiCheckCircle className="w-4 h-4 text-gray-400" />
+                              ) : (
+                                <CiUnread className="w-4 h-4 text-gray-400 " />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-sm font-medium">
+                                {n.title}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {n.desc}
+                              </div>
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {n.time}
+                            </div>
+                          </div>
+                        ))
+                    )}
+                  </div>
+                  <div className="px-3 py-2 border-t text-center text-sm">
+                    <button
+                      className="text-sm text-gray-500 hover:underline"
+                      onClick={() => {
+                        markAllRead(selectedCategory);
+                      }}
+                    >
+                      Mark all read
+                    </button>
+                  </div>
                 </div>
-                <div className="px-3 py-2 border-t text-center text-sm">
-                  <button
-                    className="text-sm text-gray-500 hover:underline"
-                    onClick={() => {
-                      markAllRead(selectedCategory);
-                    }}
-                  >
-                    Mark all read
-                  </button>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
+            {/* Refer and Earn button */}
+            <div>
+              <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-600 hover:text-white flex items-center gap-2"
+                onClick={() => setActive && setActive("Refer & Earn")}
+              >
+                <span>Refer & Earn</span>
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
