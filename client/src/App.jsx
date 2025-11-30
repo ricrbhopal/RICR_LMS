@@ -1,11 +1,10 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import Header from "./components/Header.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Home from "./pages/HomePage";
 import { ReferEarnProvider } from "./contexts/ReferEarnContext.jsx";
-
 
 function App() {
   const [active, setActive] = React.useState("Dashboard");
@@ -14,11 +13,14 @@ function App() {
     <>
       <Router>
         <ReferEarnProvider>
-          <Navbar setActive={setActive} />
+          <Header setActive={setActive} />
 
           <Routes>
-            <Route path="/" element={<Home active={active} setActive={setActive} />} />
-            
+            <Route
+              path="/"
+              element={<Home active={active} setActive={setActive} />}
+            />
+
             <Route
               path="*"
               element={
