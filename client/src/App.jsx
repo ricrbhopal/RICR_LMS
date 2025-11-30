@@ -1,10 +1,11 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx";
+
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Home from "./pages/HomePage";
 import { ReferEarnProvider } from "./contexts/ReferEarnContext.jsx";
+
 
 function App() {
   const [active, setActive] = React.useState("Dashboard");
