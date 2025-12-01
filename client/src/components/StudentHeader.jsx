@@ -1,12 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { HiChevronDown } from "react-icons/hi";
 
-import {
-  FiBell,
-  FiCalendar,
-  FiUserCheck,
-  FiCheckCircle,
-} from "react-icons/fi";
+import { FiBell, FiCalendar, FiUserCheck, FiCheckCircle } from "react-icons/fi";
 import { CiUnread } from "react-icons/ci";
 import { FaRupeeSign, FaBriefcase, FaBook, FaGift } from "react-icons/fa";
 import { useReferEarn } from "../contexts/ReferEarnContext";
@@ -347,11 +342,48 @@ const StudentHeader = ({ setActive }) => {
             </div>
             {/* Refer and Earn button */}
             <div>
-              <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-600 hover:text-white flex items-center gap-2"
+              <button
+                className="relative px-4 py-2 bg-blue-100 text-blue-700 rounded-sm hover:bg-blue-600 hover:text-white flex items-center gap-2  border-2"
                 onClick={() => setActive && setActive("Refer & Earn")}
               >
-                <span>Refer & Earn</span>
+                <span className="relative z-10">Refer & Earn</span>
+                {/* Animated border droplet effect */}
+                <span className="absolute inset-0 rounded-lg">
+                  <span className="absolute w-1.5 h-1.5 bg-blue-800 rounded-full animate-border-droplet shadow-xl shadow-blue-200"></span>
+                </span>
               </button>
+              <style jsx>{`
+                @keyframes border-droplet {
+                  0% {
+                    top: -4px;
+                    left: -4px;
+                    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+                  }
+                  35% {
+                    top: -4px;
+                    left: 98%;
+                    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+                  }
+                  50% {
+                    top: 95%;
+                    left: 98%;
+                    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+                  }
+                  85% {
+                    top: 95%;
+                    left: -4px;
+                    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+                  }
+                  100% {
+                    top: -4px;
+                    left: -4px;
+                    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+                  }
+                }
+                .animate-border-droplet {
+                  animation: border-droplet 5s linear infinite 2s;
+                }
+              `}</style>
             </div>
           </div>
         </div>
