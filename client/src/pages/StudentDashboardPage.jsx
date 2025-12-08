@@ -9,8 +9,9 @@ import JobsAndInternship from "../components/StudentDashboard/JobsAndInternship.
 import Alumni from "../components/StudentDashboard/Alumni.jsx";
 import ReferAndEarn from "../components/StudentDashboard/ReferAndEarn.jsx";
 
-const StudentDashboardPage = ({ active, setActive }) => {
+const StudentDashboardPage = () => {
   const [coursesKey, setCoursesKey] = React.useState(0);
+  const [active, setActive] = React.useState("Dashboard");
 
   const handleSetActive = (newActive) => {
     // If Courses is clicked, increment key to force remount

@@ -1,26 +1,37 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header.jsx";
+import Header from "./components/Headers/Header.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import Home from "./pages/HomePage";
 import { ReferEarnProvider } from "./contexts/ReferEarnContext.jsx";
+import StudentDashboardPage from "./pages/StudentDashboardPage.jsx";
+import TeacherDashboardPage from "./pages/TeacherDashboardPage.jsx";
+import Login from "./pages/Login.jsx";
 
 function App() {
-  const [active, setActive] = React.useState("Dashboard");
-
   return (
     <>
       <Router>
         <ReferEarnProvider>
-          <Header setActive={setActive} />
+          <Header />
 
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route
-              path="/"
-              element={<Home active={active} setActive={setActive} />}
+              path="/student-dashboard"
+              element={<StudentDashboardPage />}
             />
-
+            <Route
+              path="/teacher-dashboard"
+              element={<TeacherDashboardPage />}
+            />
+            <Route
+              path="/login"
+              element={
+                <Login />
+              }
+            />
             <Route
               path="*"
               element={
