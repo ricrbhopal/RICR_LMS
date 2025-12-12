@@ -10,12 +10,25 @@ import {
   FaLinkedin,
 } from "react-icons/fa";
 import { HiFilter } from "react-icons/hi";
+import StudentDetailsModal from "./StudentDetails/StudentDetailsModal";
 
 const Students = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCourse, setFilterCourse] = useState("all");
   const [showOngoing, setShowOngoing] = useState(true);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const openStudentModal = (student) => {
+    setSelectedStudent(student);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setTimeout(() => setSelectedStudent(null), 300);
+  };
 
   // Sample student data
   const studentsData = [
@@ -334,7 +347,8 @@ const Students = () => {
                   {ongoingStudents.map((student) => (
                     <tr
                       key={student.id}
-                      className="hover:bg-slate-50 transition-colors"
+                      onClick={() => openStudentModal(student)}
+                      className="hover:bg-slate-50 transition-colors cursor-pointer"
                     >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
@@ -478,7 +492,8 @@ const Students = () => {
                   {completedStudents.map((student) => (
                     <tr
                       key={student.id}
-                      className="hover:bg-slate-50 transition-colors"
+                      onClick={() => openStudentModal(student)}
+                      className="hover:bg-slate-50 transition-colors cursor-pointer"
                     >
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
@@ -559,6 +574,13 @@ const Students = () => {
           )}
         </div>
       </div>
+
+      {/* Student Details Modal */}
+      <StudentDetailsModal
+        student={selectedStudent}
+        isOpen={showModal}
+        onClose={closeModal}
+      />
     </div>
   );
 };
