@@ -19,7 +19,7 @@ const StudentDetailsModal = ({ student, isOpen, onClose }) => {
     { id: 'course', label: 'Course Information' },
     { id: 'progress', label: 'Progress' },
     { id: 'attendance', label: 'Attendance' },
-    { id: 'requests', label: 'Requests' },
+    // { id: 'requests', label: 'Requests' },
     { id: 'contact', label: 'Contact Details' },
   ];
 
@@ -42,7 +42,7 @@ const StudentDetailsModal = ({ student, isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 mt-5">
-      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[85vh] overflow-hidden flex flex-col">
+      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full h-[85vh] overflow-hidden flex flex-col">
         {/* Modal Header */}
         <div className="bg-linear-to-r from-blue-500 to-blue-600 text-white py-4 px-6">
           <div className="flex items-center justify-between">
